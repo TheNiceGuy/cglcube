@@ -88,7 +88,7 @@ int sdl_handle_event(struct sdl_context* st_sdl) {
                 sdl_stop(st_sdl); break;
             }
         }
-	}
+    }
 
     return 0;
 }

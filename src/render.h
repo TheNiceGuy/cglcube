@@ -5,13 +5,13 @@
 #include "config.h"
 
 struct render_context {
-	int running;
+    int running;
     int window_x, window_y;
 
-	struct sdl_context* st_sdl_parent;
+    struct sdl_context* st_sdl_parent;
 
-	pthread_t thread;
-	pthread_mutex_t thread_mutex;
+    pthread_t thread;
+    pthread_mutex_t thread_mutex;
 };
 
 void  render_init(struct render_context* st_render, int x, int y);

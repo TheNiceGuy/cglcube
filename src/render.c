@@ -4,7 +4,7 @@
 #include "draw.h"
 
 void  render_init(struct render_context* st_render, int x, int y) {
-	st_render->running  = FALSE;
+    st_render->running  = FALSE;
     st_render->window_x = x;
     st_render->window_y = y;
 }
@@ -38,7 +38,7 @@ void* render_timer(void* st_render_ptr) {
 }
 
 int render_start(struct render_context* st_render) {
-	st_render->running = TRUE;
+    st_render->running = TRUE;
     st_render->thread_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 
     pthread_create(&st_render->thread, NULL, &render_timer, st_render);
@@ -51,21 +51,21 @@ int render_start(struct render_context* st_render) {
 }
 
 int render_stop(struct render_context* st_render) {
-	st_render->running = FALSE;
+    st_render->running = FALSE;
     pthread_join(st_render->thread, NULL);
 
     return SUCCESS;
 }
 
 int render_window(struct render_context* st_render) {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.1, 0.39, 0.88, 1.0);
-	glLoadIdentity();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(0.1, 0.39, 0.88, 1.0);
+    glLoadIdentity();
 
-	draw_2Dgrid(20, 1);
+    draw_2Dgrid(20, 1);
 
-	glFlush();
-	SDL_GL_SwapWindow(st_render->st_sdl_parent->window);
+    glFlush();
+    SDL_GL_SwapWindow(st_render->st_sdl_parent->window);
 
-	return SUCCESS;
+    return SUCCESS;
 }
