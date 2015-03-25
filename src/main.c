@@ -13,6 +13,5 @@ int main() {
     sdl_start(&st_sdl);
     sdl_handle_event(&st_sdl);
 
-
     return 0;
 }
