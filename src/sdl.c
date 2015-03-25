@@ -1,3 +1,4 @@
+#include "config.h"
 #include "sdl.h"
 
 void sdl_display_version(struct sdl_context* st_sdl) {
@@ -20,13 +21,15 @@ void sdl_opengl_version(struct sdl_context* st_sdl) {
 
 void sdl_init(struct sdl_context* st_sdl) {
     st_sdl->running = FALSE;
+
+    render_init(&st_sdl->st_render, DEFAULT_RES_X, DEFAULT_RES_Y);
+    render_link_sdl(&st_sdl->st_render, st_sdl);
 }
 
 int sdl_start(struct sdl_context* st_sdl) {
     if(st_sdl->running == TRUE)
         return FAILED;
 
-    render_link_sdl(&st_sdl->st_render, st_sdl);
     render_start(&st_sdl->st_render);
 
     st_sdl->running = TRUE;
@@ -50,14 +53,29 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
         exit(FAILED);
     }
 
-    st_sdl->window = SDL_CreateWindow(NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                      st_sdl->st_render.window_x, st_sdl->st_render.window_y,
+    st_sdl->window = SDL_CreateWindow(NAME, SDL_WINDOWPOS_CENTERED,
+                                      SDL_WINDOWPOS_CENTERED,
+                                      st_sdl->st_render.window_x,
+                                      st_sdl->st_render.window_y,
                                       SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if(st_sdl->window == NULL) {
         printf("Can't create SDL window: %s\n", SDL_GetError());
         exit(FAILED);
     }
     st_sdl->window_glcontext = SDL_GL_CreateContext(st_sdl->window);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+    glEnable(GL_MULTISAMPLE);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_POLYGON_SMOOTH);
+    glDepthFunc(GL_LEQUAL);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
     pthread_mutex_unlock(&st_sdl->st_render.thread_mutex);
 
     return 0;
@@ -77,7 +95,7 @@ int sdl_handle_event(struct sdl_context* st_sdl) {
 
     while (st_sdl->running == TRUE) {
         SDL_WaitEvent(&st_sdl->event);
-
+        
         switch(st_sdl->event.type) {
         case SDL_QUIT:
             sdl_stop(st_sdl); break;
@@ -91,4 +109,8 @@ int sdl_handle_event(struct sdl_context* st_sdl) {
     }
 
     return 0;
+}
+
+int sdl_handle_event_kb(struct sdl_context* st_sdl) {
+
 }

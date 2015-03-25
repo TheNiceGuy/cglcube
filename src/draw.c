@@ -1,3 +1,5 @@
+#include <GL/gl.h>
+#include "config.h"
 #include "draw.h"
 
 void draw_2Dgrid(int count, float distance) {

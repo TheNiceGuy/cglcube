@@ -1,9 +1,6 @@
 #ifndef DRAW_H
 #define DRAW_H
 
-#include <GL/gl.h>
-#include "config.h"
-
 /**
  * This function draws a 2D grid on the X and Y axis.
  *

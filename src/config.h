@@ -3,6 +3,12 @@
  */
 #define NAME "CGLCube"
 
+#define DEFAULT_RES_X 400
+#define DEFAULT_RES_Y 400
+#define DEFAULT_X 1.0
+#define DEFAULT_Y 1.0
+#define DEFAULT_Z 1.0
+
 /**
  * Defines a FALSE boolean.
  */

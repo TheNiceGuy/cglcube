@@ -21,7 +21,8 @@ EXEC=main
 BINDIR=/usr/bin
 SRCDIR=src
 
-OBJECTS=$(SRCDIR)/main.o $(SRCDIR)/sdl.o $(SRCDIR)/render.o $(SRCDIR)/draw.o
+OBJECTS=$(SRCDIR)/main.o $(SRCDIR)/sdl.o $(SRCDIR)/render.o $(SRCDIR)/draw.o \
+		$(SRCDIR)/camera.o
 
 all: $(EXEC)
 

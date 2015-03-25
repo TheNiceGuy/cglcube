@@ -3,8 +3,8 @@
 
 #include <SDL2/SDL.h>
 #include <GL/gl.h>
-#include "config.h"
 #include "render.h"
+#include "camera.h"
 
 /**
  * This data structure contains variables about the main SDL context of the
@@ -93,6 +93,8 @@ int sdl_free(struct sdl_context* st_sdl);
  * @return An error code defined in config.h.
  */
 int sdl_handle_event(struct sdl_context* st_sdl);
+
+int sdl_handle_event_kb(struct sdl_context* st_sdl); 
 
 /** @file */
 #endif

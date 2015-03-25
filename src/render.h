@@ -2,7 +2,7 @@
 #define RENDER_H
 
 #include <pthread.h>
-#include "config.h"
+#include "camera.h"
 
 /**
  * This data structure contains variables about the rendering context of the
@@ -22,6 +22,14 @@ struct render_context {
     * Contains the y resolution of the window.
     */
     int window_y;
+    /**
+    * Contains the ratio x/y.
+    */
+    double ratio;
+    /**
+     * Contains the camera context.
+     */
+    struct camera_context st_camera;
     /**
     * Points to the parent SDL context of the rendering context.
     */
@@ -52,6 +60,8 @@ void  render_init(struct render_context* st_render, int x, int y);
  * @param st_sdl A pointer to a sdl_context structure.
  */
 void  render_link_sdl(struct render_context* st_render, struct sdl_context* st_sdl);
+
+void  render_resize_window(struct render_context* st_render, int x, int y);
 
 /**
  * This function is the main rendering method. It draws and refreshes the window
