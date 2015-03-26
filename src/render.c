@@ -9,7 +9,11 @@ void render_init(struct render_context* st_render, int x, int y) {
     st_render->running  = FALSE;
     st_render->window_x = x;
     st_render->window_y = y;
+    st_render->old_x    = x;
+    st_render->old_y    = y;
+    st_render->ratio    = (double)x/(double)y;
 
+    camera_init(&st_render->st_camera);
     camera_link_render(&st_render->st_camera, st_render);
 }
 
@@ -24,8 +28,7 @@ void render_resize_window(struct render_context* st_render, int x, int y) {
     else
         st_render->window_y = y;
 
-    st_render->ratio = st_render->window_x/st_render->window_y;
-    camera_resize(&st_render->st_camera);
+    st_render->ratio = (double)st_render->window_x/(double)st_render->window_y;
 }
 
 void* render_timer(void* st_render_ptr) {
@@ -36,7 +39,7 @@ void* render_timer(void* st_render_ptr) {
     sdl_create_opengl(st_render->st_sdl_parent);
     sdl_opengl_version(st_render->st_sdl_parent);
 
-    while(st_render->running == TRUE) {
+    while(st_render->running) {
         time_ticks = SDL_GetTicks();
 
         if(time_ticks - time_delay > (1000/60)) {
@@ -53,6 +56,9 @@ void* render_timer(void* st_render_ptr) {
 }
 
 int render_start(struct render_context* st_render) {
+    if(st_render->running)
+        return FAILED;
+
     st_render->running = TRUE;
     st_render->thread_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 
@@ -66,6 +72,9 @@ int render_start(struct render_context* st_render) {
 }
 
 int render_stop(struct render_context* st_render) {
+    if(!st_render->running)
+        return FAILED;
+
     st_render->running = FALSE;
     pthread_join(st_render->thread, NULL);
 
@@ -79,7 +88,7 @@ int render_window(struct render_context* st_render) {
 
     camera_update(&st_render->st_camera);
 
-    draw_2Dgrid(20, 0.1);
+    draw_2Dgrid(10, 0.2);
 
     glFlush();
     SDL_GL_SwapWindow(st_render->st_sdl_parent->window);

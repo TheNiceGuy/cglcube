@@ -18,6 +18,11 @@ struct sdl_context {
      */
     int running;
     /**
+     * Contains a bool defined in config.h that tells if the game is
+     * in fullscreen mode.
+     */
+    int fullscreen;
+    /**
      * Contains the rendering context.
      */
     struct render_context st_render;
@@ -78,6 +83,14 @@ int sdl_stop(struct sdl_context* st_sdl);
 int sdl_create_opengl(struct sdl_context* st_sdl);
 
 /**
+ * This function toggles the fullscreen mode in the game.
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ * @return An error code defined in config.h.
+ */
+int sdl_fullscreen(struct sdl_context* st_sdl);
+
+/**
  * This function frees SDL's memories by detroying its contexts. It quits SDL as
  * well.
  *
@@ -94,7 +107,50 @@ int sdl_free(struct sdl_context* st_sdl);
  */
 int sdl_handle_event(struct sdl_context* st_sdl);
 
-int sdl_handle_event_kb(struct sdl_context* st_sdl); 
+/**
+ * This function handles window events like resizing.
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ * @param window The structure about the event.
+ * @return An error code defined in config.h.
+ */
+int sdl_handle_window(struct sdl_context* st_sdl, SDL_WindowEvent window);
+
+/**
+ * This function handles keyboard events like a keypress.
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ * @param window The structure about the event.
+ * @return An error code defined in config.h.
+ */
+int sdl_handle_key(struct sdl_context* st_sdl, SDL_Keycode key);
+
+/**
+ * This function handles mouse button events like a click.
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ * @param window The structure about the event.
+ * @return An error code defined in config.h.
+ */
+int sdl_handle_button(struct sdl_context* st_sdl, SDL_MouseButtonEvent mouse);
+
+/**
+ * This function handles mouse motion events like moving the mouse.
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ * @param window The structure about the event.
+ * @return An error code defined in config.h.
+ */
+int sdl_handle_motion(struct sdl_context* st_sdl, SDL_MouseMotionEvent motion);
+
+/**
+ * This function handles mouse wheel events like scrolling.
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ * @param window The structure about the event.
+ * @return An error code defined in config.h.
+ */
+int sdl_handle_wheel(struct sdl_context* st_sdl, SDL_MouseWheelEvent wheel);
 
 /** @file */
 #endif

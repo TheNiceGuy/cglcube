@@ -10,37 +10,45 @@
  */
 struct render_context {
     /**
-    * Contains a bool defined in config.h about the state of the
-    * rendering context, whether or not it is running.
-    */
+     * Contains a bool defined in config.h about the state of the
+     * rendering context, whether or not it is running.
+     */
     int running;
     /**
-    * Contains the x resolution of the window.
-    */
+     * Contains the X resolution of the window.
+     */
     int window_x;
     /**
-    * Contains the y resolution of the window.
-    */
+     * Contains the Y resolution of the window.
+     */
     int window_y;
     /**
-    * Contains the ratio x/y.
-    */
+     * Contains the X resolution before the fullscreen.
+     */
+    int old_x;
+    /**
+     * Contains the Y resolution before the fullscreen.
+     */
+    int old_y;
+    /**
+     * Contains the ratio X/Y.
+     */
     double ratio;
     /**
-     * Contains the camera context.
-     */
+      * Contains the camera context.
+      */
     struct camera_context st_camera;
     /**
-    * Points to the parent SDL context of the rendering context.
-    */
+     * Points to the parent SDL context of the rendering context.
+     */
     struct sdl_context* st_sdl_parent;
     /**
-    * Contains the thread of the rendering context.
-    */
+     * Contains the thread of the rendering context.
+     */
     pthread_t thread;
     /**
-    * Contains the mutex for locking the rendering context.
-    */
+     * Contains the mutex for locking the rendering context.
+     */
     pthread_mutex_t thread_mutex;
 };
 
@@ -61,6 +69,11 @@ void  render_init(struct render_context* st_render, int x, int y);
  */
 void  render_link_sdl(struct render_context* st_render, struct sdl_context* st_sdl);
 
+/**
+ * This function resizes the region that is rendered by the engine.
+ *
+ * @param st_sdl A pointer to a render_context structure.
+ */
 void  render_resize_window(struct render_context* st_render, int x, int y);
 
 /**
