@@ -15,7 +15,7 @@ ifndef $(EXECCMD)
 endif
 
 CCFLAGS+=-Wall -pedantic -g
-LDFLAGS+=-lSDL2 -lGL -lGLU -lpthread
+LDFLAGS+=-lSDL2 -lGL -lGLU -lpthread -lm
 
 EXEC=main
 BINDIR=/usr/bin
