@@ -3,6 +3,16 @@
  */
 #define NAME "CGLCube"
 
+/*
+ * Remove gcc's warning about redefined
+ */
+#ifdef SUCCESS
+    #undef SUCCESS
+#endif
+#ifdef FAILED
+    #undef FAILED
+#endif
+
 #define DEFAULT_RES_X 500
 #define DEFAULT_RES_Y 500
 #define DEFAULT_X 3.5
