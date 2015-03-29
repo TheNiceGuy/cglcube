@@ -12,7 +12,6 @@ DOXYGEN=doxygen
 DOXYGEN_CONF=./doc/doxygen.conf
 
 BINDIR=./bin
-INSDIR=/usr/bin
 SRCDIR=./src
 
 OBJECTS=$(SRCDIR)/main.o $(SRCDIR)/sdl.o $(SRCDIR)/render.o $(SRCDIR)/draw.o \
@@ -76,16 +75,11 @@ mkdir:
 
 clean:
 	$(RM) $(OBJECTS)
-	$(RM) $(BINDIR)/*
+	$(RM) $(BINDIR)/*.dll
+	$(RM) $(BINDIR)/$(EXEC)
 
 run:
 	$(EXECCMD) $(BINDIR)/$(EXEC)
 
 debug:
 	$(DBUGCMD) $(BINDIR)/$(EXEC)
-
-install:
-	$(CP) $(BINDIR)/$(EXEC) $(INSDIR)/$(EXEC)
-
-uninstall:
-	$(RM) $(INSDIR)/$(EXEC)
