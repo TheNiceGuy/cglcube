@@ -29,7 +29,7 @@ WIN32_LD=i686-w64-mingw32-gcc
 WIN32_LIBS_LOC=/usr/i686-w64-mingw32
 WIN32_LIBS=SDL2.dll,SDL2_ttf.dll,libwinpthread-1.dll,libfreetype-6.dll,glew32.dll
 WIN32_CCFLAGS=-I$(WIN32_LIBS_LOC)/include/SDL2 -Dmain=SDL_main -D__WIN32__ \
-              -Wall -pedantic -g -static
+              -DGLEW_STATIC -Wall -pedantic -g -static
 WIN32_LDFLAGS=-L$(WIN32_LIBS_LOC)/lib -lmingw32 -mwindows -lwinpthread \
               -lSDL2main -lSDL2 -lSDL2_ttf -lopengl32 -lglu32 -lglew32 -lm
 
@@ -84,4 +84,5 @@ run:
 	$(EXECCMD) ./$(EXEC)
 
 debug:
-	$(DBUGCMD) $(BINDIR)/$(EXEC)
+	$(CD) $(BINDIR); \
+	$(DBUGCMD) ./$(EXEC)
