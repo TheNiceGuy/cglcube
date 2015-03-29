@@ -5,6 +5,7 @@ DBUGCMD=valgrind
 
 RM=/usr/bin/rm -rf
 CP=/usr/bin/cp
+CD=cd
 ECHO=/usr/bin/echo
 MKDIR=/usr/bin/mkdir -p
 
@@ -19,7 +20,7 @@ OBJECTS=$(SRCDIR)/main.o $(SRCDIR)/sdl.o $(SRCDIR)/render.o $(SRCDIR)/draw.o \
 
 LINUX_CC=gcc
 LINUX_LD=gcc
-LINUX_CCFLAGS=-I/usr/include/SDL2 -I/usr/include -D_REENTRANT \
+LINUX_CCFLAGS=-I/usr/include/SDL2 -I/usr/include -D_REENTRANT -D__LINUX__ \
               -Wall -pedantic -g
 LINUX_LDFLAGS=-L/usr/lib -lm -lpthread -lSDL2 -lSDL2_ttf -lGL -lGLU -lGLEW
 
@@ -27,7 +28,7 @@ WIN32_CC=i686-w64-mingw32-gcc
 WIN32_LD=i686-w64-mingw32-gcc
 WIN32_LIBS_LOC=/usr/i686-w64-mingw32
 WIN32_LIBS=SDL2.dll,SDL2_ttf.dll,libwinpthread-1.dll,libfreetype-6.dll,glew32.dll
-WIN32_CCFLAGS=-I$(WIN32_LIBS_LOC)/include/SDL2 -Dmain=SDL_main \
+WIN32_CCFLAGS=-I$(WIN32_LIBS_LOC)/include/SDL2 -Dmain=SDL_main -D__WIN32__ \
               -Wall -pedantic -g -static
 WIN32_LDFLAGS=-L$(WIN32_LIBS_LOC)/lib -lmingw32 -mwindows -lwinpthread \
               -lSDL2main -lSDL2 -lSDL2_ttf -lopengl32 -lglu32 -lglew32 -lm
@@ -79,7 +80,8 @@ clean:
 	$(RM) $(BINDIR)/$(EXEC)
 
 run:
-	$(EXECCMD) $(BINDIR)/$(EXEC)
+	$(CD) $(BINDIR); \
+	$(EXECCMD) ./$(EXEC)
 
 debug:
 	$(DBUGCMD) $(BINDIR)/$(EXEC)

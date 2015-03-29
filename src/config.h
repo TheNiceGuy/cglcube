@@ -1,7 +1,12 @@
 /**
  * Defines the name of the game.
  */
-#define NAME "CGLCube"
+
+#if defined(__LINUX__)
+    #define NAME "CGLCube-LINUX"
+#elif defined(__WIN32__)
+    #define NAME "CGLCube-WIN32"
+#endif
 
 /*
  * Remove gcc's warning about redefined
