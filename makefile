@@ -14,6 +14,8 @@ ifndef $(EXECCMD)
 	EXECCMD=exec
 endif
 
+DOXYGEN=doxygen
+DOXYGEN_CONF=./doc/doxygen.conf
 CCFLAGS+=-Wall -pedantic -g
 LDFLAGS+=-lm -lpthread -lSDL2 -lSDL2_ttf -lGL -lGLU -lGLEW
 
@@ -31,6 +33,9 @@ $(EXEC): $(OBJECTS)
 
 %.o: %.c
 	$(CC) -o $@ -c $< $(CCFLAGS)
+
+docs:
+	$(DOXYGEN) $(DOXYGEN_CONF)
 
 mkdir:
 	@mkdir -p bin
