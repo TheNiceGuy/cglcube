@@ -5,7 +5,7 @@
 #include "SDL2/SDL_ttf.h"
 
 #define DEFAULT_SIZE 12
-#define DEFAULT_FONT "/usr/share/fonts/TTF/DejaVuSans.ttf"
+#define DEFAULT_FONT "./font/DejaVuSans.ttf"
 
 /**
  * This data structure is used for rendering text in SDL.
