@@ -182,7 +182,8 @@ int render_overlay(struct render_context* st_render) {
 int render_window(struct render_context* st_render) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.1, 0.39, 0.88, 0);
-
+    camera_rotate_scene(&st_render->st_camera, 1);
+    camera_rotate_view(&st_render->st_camera, 1);
     camera_update(&st_render->st_camera);
 
     glMatrixMode(GL_MODELVIEW);
