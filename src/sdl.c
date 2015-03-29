@@ -71,6 +71,10 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
 
     st_sdl->window_glcontext = SDL_GL_CreateContext(st_sdl->window);
     glewInit();
+    if(glewInit() != GLEW_OK) {
+        printf("Failed to initialise GLEW\n");
+        exit(FAILED);
+    }
     glEnable(GL_DEPTH_TEST);
     SDL_GL_SetSwapInterval(0);
 
