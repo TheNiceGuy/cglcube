@@ -1,4 +1,8 @@
-#include <unistd.h>
+#if defined(__LINUX__)
+    #include <unistd.h>
+#elif defined(__WIN32__)
+    #include <windows.h>
+#endif
 #include "config.h"
 #include "render.h"
 #include "sdl.h"
@@ -89,7 +93,11 @@ int render_start(struct render_context* st_render) {
     st_render->thread_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 
     pthread_create(&st_render->thread, NULL, &render_timer, st_render);
+#if defined(__LINUX__)
     sleep(1);
+#elif defined(__WIN32__)
+    Sleep(1000);
+#endif
 
     pthread_mutex_lock(&st_render->thread_mutex);
     pthread_mutex_unlock(&st_render->thread_mutex);
