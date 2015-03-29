@@ -2,7 +2,8 @@
 #define SDL_H
 
 #include <SDL2/SDL.h>
-#include <GL/gl.h>
+#include <SDL2/SDL_ttf.h>
+#include <GL/glew.h>
 #include "render.h"
 #include "camera.h"
 

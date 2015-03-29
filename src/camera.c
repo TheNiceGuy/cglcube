@@ -19,14 +19,12 @@ void camera_link_render(struct camera_context* st_camera, struct render_context*
 }
 
 void camera_resize(struct camera_context* st_camera) {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
     glViewport(0, 0,
                (GLsizei)st_camera->st_render_parent->window_x,
                (GLsizei)st_camera->st_render_parent->window_y);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
     gluPerspective(45.0, st_camera->st_render_parent->ratio, 0.1, 100.0);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
 }
 
 void camera_toggle_move(struct camera_context* st_camera) {
@@ -102,7 +100,6 @@ int camera_update(struct camera_context* st_camera) {
                   st_camera->z,
                   0, 0, 0, 0, 0,-1);
     }
-
 
     glRotated(st_camera->angle_scene, 0, 0, 1);
 

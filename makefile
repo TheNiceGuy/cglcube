@@ -15,14 +15,14 @@ ifndef $(EXECCMD)
 endif
 
 CCFLAGS+=-Wall -pedantic -g
-LDFLAGS+=-lSDL2 -lGL -lGLU -lpthread -lm
+LDFLAGS+=-lm -lpthread -lSDL2 -lSDL2_ttf -lGL -lGLU -lGLEW
 
 EXEC=main
 BINDIR=/usr/bin
 SRCDIR=src
 
 OBJECTS=$(SRCDIR)/main.o $(SRCDIR)/sdl.o $(SRCDIR)/render.o $(SRCDIR)/draw.o \
-		$(SRCDIR)/camera.o
+		$(SRCDIR)/camera.o $(SRCDIR)/text.o $(SRCDIR)/std.o
 
 all: $(EXEC)
 

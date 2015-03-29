@@ -54,6 +54,11 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
         exit(FAILED);
     }
 
+    if(TTF_Init() != SUCCESS) {
+        printf("TTF_Init: %s\n", TTF_GetError());
+        exit(FAILED);
+    }
+
     st_sdl->window = SDL_CreateWindow(NAME, SDL_WINDOWPOS_CENTERED,
                                       SDL_WINDOWPOS_CENTERED,
                                       st_sdl->st_render.window_x,
@@ -63,7 +68,11 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
         printf("Can't create SDL window: %s\n", SDL_GetError());
         exit(FAILED);
     }
+
     st_sdl->window_glcontext = SDL_GL_CreateContext(st_sdl->window);
+    glewInit();
+    glEnable(GL_DEPTH_TEST);
+    SDL_GL_SetSwapInterval(0);
 
     pthread_mutex_unlock(&st_sdl->st_render.thread_mutex);
 
