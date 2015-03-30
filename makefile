@@ -1,17 +1,20 @@
 EXEC=cglcube
 
 EXECCMD=exec
-DBUGCMD=valgrind
+DBUGCMD=valgrind --leak-check=full
 
+CD=cd
 RM=/usr/bin/rm -rf
 CP=/usr/bin/cp
-CD=cd
+MV=/usr/bin/mv
+ZIP=/usr/bin/zip -r
 ECHO=/usr/bin/echo
 MKDIR=/usr/bin/mkdir -p
 
-DOXYGEN=doxygen
-DOXYGEN_CONF=./doc/doxygen.conf
+DOXYGEN=/usr/bin/doxygen
+DOXYGEN_CONF=doxygen.conf
 
+DOCDIR=./doc
 BINDIR=./bin
 SRCDIR=./src
 
@@ -67,22 +70,30 @@ linux:
 win32:
 	make TARGET=win32
 	@$(CP) $(WIN32_LIBS_LOC)/bin/{$(WIN32_LIBS)} $(BINDIR)/
+	@$(MV) $(BINDIR)/$(EXEC) $(BINDIR)/$(EXEC).exe
 
 docs:
-	$(DOXYGEN) $(DOXYGEN_CONF)
+	$(DOXYGEN) $(DOCDIR)/$(DOXYGEN_CONF)
 
 mkdir:
 	@$(MKDIR) $(BINDIR)
+
+zip:
+	$(ZIP) $(EXEC).zip $(BINDIR)
 
 clean:
 	$(RM) $(OBJECTS)
 	$(RM) $(BINDIR)/*.dll
 	$(RM) $(BINDIR)/$(EXEC)
+	$(RM) $(BINDIR)/$(EXEC).exe
+	$(RM) $(DOCDIR)/html
+	$(RM) $(DOCDIR)/latex
+	$(RM) $(EXEC).zip
 
 run:
-	$(CD) $(BINDIR); \
+	@$(CD) $(BINDIR); \
 	$(EXECCMD) ./$(EXEC)
 
 debug:
-	$(CD) $(BINDIR); \
+	@$(CD) $(BINDIR); \
 	$(DBUGCMD) ./$(EXEC)

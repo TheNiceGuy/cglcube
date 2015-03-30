@@ -10,8 +10,8 @@ int main(int argc, char *argv[]) {
 
     sdl_init(&st_sdl);
     sdl_start(&st_sdl);
-
     sdl_handle_event(&st_sdl);
+    sdl_stop(&st_sdl);
 
     return 0;
 }

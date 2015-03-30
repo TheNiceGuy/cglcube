@@ -31,6 +31,7 @@ int sdl_start(struct sdl_context* st_sdl) {
     if(st_sdl->running == TRUE)
         return FAILED;
 
+    sdl_create_opengl(st_sdl);
     render_start(&st_sdl->st_render);
 
     st_sdl->running = TRUE;
@@ -40,15 +41,15 @@ int sdl_start(struct sdl_context* st_sdl) {
 int sdl_stop(struct sdl_context* st_sdl) {
     if(st_sdl->running == FALSE)
         return FAILED;
+
     render_stop(&st_sdl->st_render);
+    sdl_free(st_sdl);
 
     st_sdl->running = FALSE;
     return SUCCESS;
 }
 
 int sdl_create_opengl(struct sdl_context* st_sdl) {
-    pthread_mutex_lock(&st_sdl->st_render.thread_mutex);
-
     if(SDL_Init(SDL_INIT_VIDEO) != SUCCESS) {
         printf("Unable to initialize SDL: %s\n", SDL_GetError());
         exit(FAILED);
@@ -68,17 +69,20 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
         printf("Can't create SDL window: %s\n", SDL_GetError());
         exit(FAILED);
     }
+    SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
     st_sdl->window_glcontext = SDL_GL_CreateContext(st_sdl->window);
+    st_sdl->render_glcontext = SDL_GL_CreateContext(st_sdl->window);
+
+    SDL_GL_MakeCurrent(st_sdl->window, st_sdl->window_glcontext);
+
     glewInit();
     if(glewInit() != GLEW_OK) {
         printf("Failed to initialise GLEW\n");
         exit(FAILED);
     }
-    glEnable(GL_DEPTH_TEST);
     SDL_GL_SetSwapInterval(0);
-
-    pthread_mutex_unlock(&st_sdl->st_render.thread_mutex);
 
     return SUCCESS;
 }
@@ -116,6 +120,7 @@ int sdl_fullscreen(struct sdl_context* st_sdl) {
 
 int sdl_free(struct sdl_context* st_sdl) {
     SDL_GL_DeleteContext(st_sdl->window_glcontext);
+    SDL_GL_DeleteContext(st_sdl->render_glcontext);
     SDL_DestroyWindow(st_sdl->window);
     SDL_Quit();
 
@@ -164,6 +169,7 @@ int sdl_handle_window(struct sdl_context* st_sdl, SDL_WindowEvent window) {
     switch(window.event) {
     case SDL_WINDOWEVENT_RESIZED:
         render_resize_window(&st_sdl->st_render, window.data1, window.data2);
+        break;
     }
 
     return SUCCESS;

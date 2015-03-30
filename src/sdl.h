@@ -33,6 +33,8 @@ struct sdl_context {
     SDL_version version_linked;
     SDL_Window *window;
     SDL_GLContext window_glcontext;
+    SDL_GLContext render_glcontext;
+    SDL_atomic_t glcontext_ready;
 };
 
 /**

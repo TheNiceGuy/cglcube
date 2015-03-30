@@ -44,12 +44,12 @@ void* render_timer(void* st_render_ptr) {
     int current_frame = 0;
     struct render_context* st_render = (struct render_context*)st_render_ptr;
 
-    sdl_create_opengl(st_render->st_sdl_parent);
-    sdl_opengl_version(st_render->st_sdl_parent);
-
     text_init(&st_render->st_overlay_text, 16);
     text_changed(&st_render->st_overlay_text);
-    sprintf(st_render->st_overlay_text.text, "%f", st_render->fps);
+    sprintf(st_render->st_overlay_text.text, "%f", st_render->fps);/**/
+
+    SDL_GL_MakeCurrent(st_render->st_sdl_parent->window,
+                       st_render->st_sdl_parent->render_glcontext);
 
     while(st_render->running) {
         time_ticks = SDL_GetTicks();
@@ -58,9 +58,7 @@ void* render_timer(void* st_render_ptr) {
          * Draw the image.
          */
         if(time_ticks-time_delay > 1000/120) {
-            pthread_mutex_lock(&st_render->thread_mutex);
             render_window(st_render);
-            pthread_mutex_unlock(&st_render->thread_mutex);
 
             current_frame++;
             time_delay = time_ticks;
@@ -80,8 +78,9 @@ void* render_timer(void* st_render_ptr) {
         }
     }
 
+    SDL_GL_MakeCurrent(st_render->st_sdl_parent->window, NULL);
+
     text_destroy(&st_render->st_overlay_text);
-    sdl_free(st_render->st_sdl_parent);
     return NULL;
 }
 
@@ -90,17 +89,8 @@ int render_start(struct render_context* st_render) {
         return FAILED;
 
     st_render->running = TRUE;
-    st_render->thread_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 
     pthread_create(&st_render->thread, NULL, &render_timer, st_render);
-#if defined(__LINUX__)
-    sleep(1);
-#elif defined(__WIN32__)
-    Sleep(1000);
-#endif
-
-    pthread_mutex_lock(&st_render->thread_mutex);
-    pthread_mutex_unlock(&st_render->thread_mutex);
 
     return SUCCESS;
 }
@@ -182,7 +172,7 @@ int render_overlay(struct render_context* st_render) {
 int render_window(struct render_context* st_render) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.1, 0.39, 0.88, 0);
-    
+
     camera_update(&st_render->st_camera);
 
     glMatrixMode(GL_MODELVIEW);

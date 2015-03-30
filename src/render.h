@@ -56,10 +56,6 @@ struct render_context {
      * Contains the thread of the rendering context.
      */
     pthread_t thread;
-    /**
-     * Contains the mutex for locking the rendering context.
-     */
-    pthread_mutex_t thread_mutex;
 };
 
 /**
