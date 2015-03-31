@@ -23,7 +23,7 @@ void sdl_init(struct sdl_context* st_sdl) {
     st_sdl->running    = FALSE;
     st_sdl->fullscreen = FALSE;
 
-    render_init(&st_sdl->st_render, DEFAULT_RES_X, DEFAULT_RES_Y);
+    render_init(&st_sdl->st_render);
     render_link_sdl(&st_sdl->st_render, st_sdl);
 }
 
@@ -60,11 +60,13 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
         exit(FAILED);
     }
 
+    sdl_resolution_start(st_sdl);
+
     st_sdl->window = SDL_CreateWindow(NAME, SDL_WINDOWPOS_CENTERED,
                                       SDL_WINDOWPOS_CENTERED,
                                       st_sdl->st_render.window_x,
                                       st_sdl->st_render.window_y,
-                                      SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+                                      SDL_WINDOW_OPENGL);
     if(st_sdl->window == NULL) {
         printf("Can't create SDL window: %s\n", SDL_GetError());
         exit(FAILED);
@@ -76,13 +78,100 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
     st_sdl->render_glcontext = SDL_GL_CreateContext(st_sdl->window);
 
     SDL_GL_MakeCurrent(st_sdl->window, st_sdl->window_glcontext);
+    sdl_opengl_version(st_sdl);
 
     glewInit();
     if(glewInit() != GLEW_OK) {
         printf("Failed to initialise GLEW\n");
-        exit(FAILED);
+        return FAILED;
     }
     SDL_GL_SetSwapInterval(0);
+
+    return SUCCESS;
+}
+
+int sdl_resolution_start(struct sdl_context* st_sdl) {
+    int index, display_index, total_index;
+    int area = 0;
+    SDL_DisplayMode mode;
+
+    display_index = SDL_GetNumVideoDisplays()-1;
+    total_index   = SDL_GetNumDisplayModes(display_index);
+
+    for(index = 0; index < total_index; index++) {
+        SDL_GetDisplayMode(display_index, index, &mode);
+
+        if(mode.w*mode.h < area || area == 0) {
+            st_sdl->st_render.window_x = mode.w;
+            st_sdl->st_render.window_y = mode.h;
+            area = mode.w*mode.h;
+        }
+    }
+
+    render_resize_window(&st_sdl->st_render,
+                          st_sdl->st_render.window_x,
+                          st_sdl->st_render.window_y);
+
+    return SUCCESS;
+}
+
+int sdl_resolution_increase(struct sdl_context* st_sdl) {
+    int index, display_index, total_index;
+    int area = st_sdl->st_render.window_x*
+               st_sdl->st_render.window_y;
+    SDL_DisplayMode mode;
+
+    display_index = SDL_GetNumVideoDisplays()-1;
+    total_index   = SDL_GetNumDisplayModes(display_index)-1;
+
+    for(index = total_index; index >= 0 ; index--) {
+        SDL_GetDisplayMode(display_index, index, &mode);
+
+        if(mode.w*mode.h > area) {
+            st_sdl->st_render.window_x = mode.w;
+            st_sdl->st_render.window_y = mode.h;
+            break;
+        }
+    }
+
+    render_resize_window(&st_sdl->st_render,
+                          st_sdl->st_render.window_x,
+                          st_sdl->st_render.window_y);
+    SDL_SetWindowSize(st_sdl->window, mode.w, mode.h);
+
+    return SUCCESS;
+}
+
+int sdl_resolution_decrease(struct sdl_context* st_sdl) {
+    int index, display_index, total_index;
+    int area = st_sdl->st_render.window_x*
+               st_sdl->st_render.window_y;
+    SDL_DisplayMode mode;
+
+    display_index = SDL_GetNumVideoDisplays()-1;
+    total_index   = SDL_GetNumDisplayModes(display_index);
+
+    for(index = 0; index < total_index ; index++) {
+        SDL_GetDisplayMode(display_index, index, &mode);
+
+        if(mode.w*mode.h < area) {
+            st_sdl->st_render.window_x = mode.w;
+            st_sdl->st_render.window_y = mode.h;
+            break;
+        }
+    }
+    /*
+     * Disable fullscreen if it is enabled.
+     */
+    if(st_sdl->fullscreen) {
+        SDL_SetWindowFullscreen(st_sdl->window, SDL_FALSE);
+        st_sdl->fullscreen = FALSE;
+    }
+
+    render_resize_window(&st_sdl->st_render,
+                          st_sdl->st_render.window_x,
+                          st_sdl->st_render.window_y);
+    SDL_SetWindowSize(st_sdl->window, mode.w, mode.h);
 
     return SUCCESS;
 }
@@ -139,10 +228,6 @@ int sdl_handle_event(struct sdl_context* st_sdl) {
             sdl_stop(st_sdl);
             break;
 
-        case SDL_WINDOWEVENT:
-            sdl_handle_window(st_sdl, st_sdl->event.window);
-            break;
-
         case SDL_KEYDOWN:
             sdl_handle_key(st_sdl, st_sdl->event.key.keysym.sym);
             break;
@@ -165,16 +250,6 @@ int sdl_handle_event(struct sdl_context* st_sdl) {
     return SUCCESS;
 }
 
-int sdl_handle_window(struct sdl_context* st_sdl, SDL_WindowEvent window) {
-    switch(window.event) {
-    case SDL_WINDOWEVENT_RESIZED:
-        render_resize_window(&st_sdl->st_render, window.data1, window.data2);
-        break;
-    }
-
-    return SUCCESS;
-}
-
 int sdl_handle_key(struct sdl_context* st_sdl, SDL_Keycode key) {
     switch(key) {
     case SDLK_ESCAPE:
@@ -183,6 +258,13 @@ int sdl_handle_key(struct sdl_context* st_sdl, SDL_Keycode key) {
         break;
     case SDLK_f:
         sdl_fullscreen(st_sdl);
+        break;
+    case SDLK_PAGEUP:
+        sdl_resolution_increase(st_sdl);
+        break;
+    case SDLK_PAGEDOWN:
+        sdl_resolution_decrease(st_sdl);
+        break;
     }
 
     return SUCCESS;

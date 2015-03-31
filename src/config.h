@@ -18,8 +18,6 @@
     #undef FAILED
 #endif
 
-#define DEFAULT_RES_X 500
-#define DEFAULT_RES_Y 500
 #define DEFAULT_X 3.5
 #define DEFAULT_Y 3.5
 #define DEFAULT_Z 3.5

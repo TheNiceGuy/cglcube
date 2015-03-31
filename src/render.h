@@ -65,7 +65,7 @@ struct render_context {
  * @param x The x resolution of the window.
  * @param y The x resolution of the window.
  */
-void  render_init(struct render_context* st_render, int x, int y);
+void  render_init(struct render_context* st_render);
 
 /**
  * This function links the rendering context with its SDL context.

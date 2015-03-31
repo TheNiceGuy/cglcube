@@ -85,6 +85,9 @@ int sdl_stop(struct sdl_context* st_sdl);
  */
 int sdl_create_opengl(struct sdl_context* st_sdl);
 
+int sdl_resolution_start(struct sdl_context* st_sdl);
+int sdl_resolution_increase(struct sdl_context* st_sdl);
+
 /**
  * This function toggles the fullscreen mode in the game.
  *
@@ -109,15 +112,6 @@ int sdl_free(struct sdl_context* st_sdl);
  * @return An error code defined in config.h.
  */
 int sdl_handle_event(struct sdl_context* st_sdl);
-
-/**
- * This function handles window events like resizing.
- *
- * @param st_sdl A pointer to an sdl_context structure.
- * @param window The structure about the event.
- * @return An error code defined in config.h.
- */
-int sdl_handle_window(struct sdl_context* st_sdl, SDL_WindowEvent window);
 
 /**
  * This function handles keyboard events like a keypress.

@@ -10,14 +10,14 @@
 #include "draw.h"
 #include "std.h"
 
-void render_init(struct render_context* st_render, int x, int y) {
+void render_init(struct render_context* st_render) {
     st_render->running  = FALSE;
-    st_render->window_x = x;
-    st_render->window_y = y;
-    st_render->old_x    = x;
-    st_render->old_y    = y;
+    st_render->window_x = 0;
+    st_render->window_y = 0;
+    st_render->old_x    = 0;
+    st_render->old_y    = 0;
     st_render->fps      = 0;
-    st_render->ratio    = (double)x/(double)y;
+    st_render->ratio    = 0;
 
     camera_init(&st_render->st_camera);
     camera_link_render(&st_render->st_camera, st_render);
