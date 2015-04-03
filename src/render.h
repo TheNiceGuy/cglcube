@@ -16,22 +16,6 @@ struct render_context {
      */
     int running;
     /**
-     * Contains the X resolution of the window.
-     */
-    int window_x;
-    /**
-     * Contains the Y resolution of the window.
-     */
-    int window_y;
-    /**
-     * Contains the X resolution before the fullscreen.
-     */
-    int old_x;
-    /**
-     * Contains the Y resolution before the fullscreen.
-     */
-    int old_y;
-    /**
      * Contains the current fps.
      */
     float fps;
@@ -40,13 +24,21 @@ struct render_context {
      */
     double ratio;
     /**
+     * Contains the dimension of the screen.
+     */
+    struct dimension st_screen;
+    /**
+     * Contains the dimension of the screen before it was fullscreened.
+     */
+    struct dimension st_screen_old;
+    /**
      * Contains the camera context.
      */
     struct camera_context st_camera;
     /**
      * Contains the text rendered on the screen.
      */
-    struct text st_overlay_text;
+    struct text st_text_fps;
     /**
      * Points to the parent SDL context of the rendering context.
      */

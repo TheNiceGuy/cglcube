@@ -22,8 +22,8 @@ void camera_resize(struct camera_context* st_camera) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0,
-               (GLsizei)st_camera->st_render_parent->window_x,
-               (GLsizei)st_camera->st_render_parent->window_y);
+              (GLsizei)st_camera->st_render_parent->st_screen.w,
+              (GLsizei)st_camera->st_render_parent->st_screen.h);
     gluPerspective(45.0, st_camera->st_render_parent->ratio, 0.1, 100.0);
 }
 

@@ -12,12 +12,12 @@
 
 void render_init(struct render_context* st_render) {
     st_render->running  = FALSE;
-    st_render->window_x = 0;
-    st_render->window_y = 0;
-    st_render->old_x    = 0;
-    st_render->old_y    = 0;
     st_render->fps      = 0;
     st_render->ratio    = 0;
+    st_render->st_screen.w = 0;
+    st_render->st_screen.h = 0;
+    st_render->st_screen_old.w = 0;
+    st_render->st_screen_old.h = 0;
 
     camera_init(&st_render->st_camera);
     camera_link_render(&st_render->st_camera, st_render);
@@ -28,13 +28,14 @@ void render_link_sdl(struct render_context* st_render, struct sdl_context* st_sd
 }
 
 void render_resize_window(struct render_context* st_render, int x, int y) {
-    st_render->window_x = x;
-    if(st_render->window_y == 0)
-        st_render->window_y = 1;
+    st_render->st_screen.w = x;
+    if(st_render->st_screen.h == 0)
+        st_render->st_screen.h = 1;
     else
-        st_render->window_y = y;
+        st_render->st_screen.h = y;
 
-    st_render->ratio = (double)st_render->window_x/(double)st_render->window_y;
+    st_render->ratio = (double)st_render->st_screen.w/
+                       (double)st_render->st_screen.h;
 }
 
 int render_timer(void* st_render_ptr) {
@@ -48,8 +49,8 @@ int render_timer(void* st_render_ptr) {
     fps = malloc(16);
 
     sprintf(fps, "FPS: %f", st_render->fps);
-    text_init(&st_render->st_overlay_text);
-    text_change(&st_render->st_overlay_text, fps);
+    text_init(&st_render->st_text_fps);
+    text_change(&st_render->st_text_fps, fps);
 
     SDL_GL_MakeCurrent(st_render->st_sdl_parent->window,
                        st_render->st_sdl_parent->render_glcontext);
@@ -74,7 +75,7 @@ int render_timer(void* st_render_ptr) {
             st_render->fps = (float)current_frame/(time_ticks-time_fps)*1000;
 
             sprintf(fps, "FPS: %f", st_render->fps);
-            text_change(&st_render->st_overlay_text, fps);
+            text_change(&st_render->st_text_fps, fps);
 
             current_frame = 0;
             time_fps = time_ticks;
@@ -84,7 +85,7 @@ int render_timer(void* st_render_ptr) {
     SDL_GL_MakeCurrent(st_render->st_sdl_parent->window, NULL);
 
     free(fps);
-    text_destroy(&st_render->st_overlay_text);
+    text_destroy(&st_render->st_text_fps);
     return SUCCESS;
 }
 
@@ -109,46 +110,17 @@ int render_stop(struct render_context* st_render) {
 }
 
 int render_info(struct render_context* st_render) {
-    GLuint texture;
-
-    text_render(&st_render->st_overlay_text);
-
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                 st_render->st_overlay_text.surface->w,
-                 st_render->st_overlay_text.surface->h,
-                 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 st_render->st_overlay_text.pixels);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBegin(GL_QUADS);
-        glTexCoord2i(0, 1);
-        glVertex2f(0, 0);
 
-        glTexCoord2i(1, 1);
-        glVertex2f((float)st_render->st_overlay_text.surface->w/
-                          st_render->window_x, 0);
+    /*
+     * Render every text on the screen.
+     */
+    text_draw(&st_render->st_text_fps, &st_render->st_screen);
 
-        glTexCoord2i(1, 0);
-        glVertex2f((float)st_render->st_overlay_text.surface->w/
-                          st_render->window_x,
-                   (float)st_render->st_overlay_text.surface->h/
-                          st_render->window_y);
-
-        glTexCoord2i(0, 0);
-        glVertex2f(0, (float)st_render->st_overlay_text.surface->h/
-                             st_render->window_y);
-    glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
-
-    glPixelZoom(1,-1);
-    glRasterPos2f(0, (float)st_render->st_overlay_text.surface->h/st_render->window_y);
 
     return SUCCESS;
 }

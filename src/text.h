@@ -1,8 +1,10 @@
 #ifndef TEXT_H
 #define TEXT_H
 
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_ttf.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <GL/gl.h>
+#include "std.h"
 
 #define DEFAULT_SIZE 12
 #define DEFAULT_FONT "./font/DejaVuSans.ttf"
@@ -24,10 +26,13 @@ struct text {
      */
     int size;
     /**
-     * Contains a bool defined in config.h that prevents
-     * re-rendering the same text.
+     * Contains the location of the text on the screen.
      */
-    int updated;
+    struct point st_loc;
+    /**
+     * Contains the texture ID for the text.
+     */
+    GLuint texture;
     /**
      * Contains the color of the text.
      */
@@ -74,5 +79,9 @@ int text_destroy(struct text* st_text);
  * @return An error code defined in config.h.
  */
 int text_render(struct text* st_text);
+
+int text_bind_texture(struct text* st_text);
+
+int text_draw(struct text* st_text, struct dimension* st_screen);
 
 #endif

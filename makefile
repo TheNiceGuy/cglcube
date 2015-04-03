@@ -19,7 +19,7 @@ BINDIR=./bin
 SRCDIR=./src
 
 OBJECTS=$(SRCDIR)/main.o $(SRCDIR)/sdl.o $(SRCDIR)/render.o $(SRCDIR)/draw.o \
-		$(SRCDIR)/camera.o $(SRCDIR)/text.o $(SRCDIR)/std.o
+		$(SRCDIR)/camera.o $(SRCDIR)/text.o $(SRCDIR)/std.o $(SRCDIR)/command.o
 
 LINUX_CC=gcc
 LINUX_LD=gcc

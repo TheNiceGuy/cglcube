@@ -20,11 +20,14 @@ void sdl_opengl_version(struct sdl_context* st_sdl) {
 }
 
 void sdl_init(struct sdl_context* st_sdl) {
-    st_sdl->running    = FALSE;
-    st_sdl->fullscreen = FALSE;
+    st_sdl->running      = FALSE;
+    st_sdl->command_mode = FALSE;
+    st_sdl->fullscreen   = FALSE;
 
     render_init(&st_sdl->st_render);
     render_link_sdl(&st_sdl->st_render, st_sdl);
+
+    command_init(&st_sdl->st_cmd);
 }
 
 int sdl_start(struct sdl_context* st_sdl) {
@@ -53,6 +56,7 @@ int sdl_stop(struct sdl_context* st_sdl) {
         return FAILED;
 
     render_stop(&st_sdl->st_render);
+    command_free(&st_sdl->st_cmd);
     sdl_free(st_sdl);
 
     st_sdl->running = FALSE;
@@ -63,15 +67,17 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
     sdl_resolution_start(st_sdl);
 
     SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     st_sdl->window = SDL_CreateWindow(NAME, SDL_WINDOWPOS_CENTERED,
                                       SDL_WINDOWPOS_CENTERED,
-                                      st_sdl->st_render.window_x,
-                                      st_sdl->st_render.window_y,
+                                      st_sdl->st_render.st_screen.w,
+                                      st_sdl->st_render.st_screen.h,
                                       SDL_WINDOW_OPENGL);
     if(st_sdl->window == NULL) {
         printf("Can't create SDL window: %s\n", SDL_GetError());
-        exit(FAILED);
+        return FAILED;
     }
 
     st_sdl->render_glcontext = SDL_GL_CreateContext(st_sdl->window);
@@ -103,23 +109,23 @@ int sdl_resolution_start(struct sdl_context* st_sdl) {
         SDL_GetDisplayMode(display_index, index, &mode);
 
         if(mode.w*mode.h < area || area == 0) {
-            st_sdl->st_render.window_x = mode.w;
-            st_sdl->st_render.window_y = mode.h;
+            st_sdl->st_render.st_screen.w = mode.w;
+            st_sdl->st_render.st_screen.h = mode.h;
             area = mode.w*mode.h;
         }
     }
 
     render_resize_window(&st_sdl->st_render,
-                          st_sdl->st_render.window_x,
-                          st_sdl->st_render.window_y);
+                          st_sdl->st_render.st_screen.w,
+                          st_sdl->st_render.st_screen.h);
 
     return SUCCESS;
 }
 
 int sdl_resolution_increase(struct sdl_context* st_sdl) {
     int index, display_index, total_index;
-    int area = st_sdl->st_render.window_x*
-               st_sdl->st_render.window_y;
+    int area = st_sdl->st_render.st_screen.w*
+               st_sdl->st_render.st_screen.h;
     SDL_DisplayMode mode;
 
     display_index = SDL_GetNumVideoDisplays()-1;
@@ -129,15 +135,15 @@ int sdl_resolution_increase(struct sdl_context* st_sdl) {
         SDL_GetDisplayMode(display_index, index, &mode);
 
         if(mode.w*mode.h > area) {
-            st_sdl->st_render.window_x = mode.w;
-            st_sdl->st_render.window_y = mode.h;
+            st_sdl->st_render.st_screen.w = mode.w;
+            st_sdl->st_render.st_screen.h = mode.h;
             break;
         }
     }
 
     render_resize_window(&st_sdl->st_render,
-                          st_sdl->st_render.window_x,
-                          st_sdl->st_render.window_y);
+                          st_sdl->st_render.st_screen.w,
+                          st_sdl->st_render.st_screen.h);
     SDL_SetWindowSize(st_sdl->window, mode.w, mode.h);
 
     return SUCCESS;
@@ -145,8 +151,8 @@ int sdl_resolution_increase(struct sdl_context* st_sdl) {
 
 int sdl_resolution_decrease(struct sdl_context* st_sdl) {
     int index, display_index, total_index;
-    int area = st_sdl->st_render.window_x*
-               st_sdl->st_render.window_y;
+    int area = st_sdl->st_render.st_screen.w*
+               st_sdl->st_render.st_screen.h;
     SDL_DisplayMode mode;
 
     display_index = SDL_GetNumVideoDisplays()-1;
@@ -156,8 +162,8 @@ int sdl_resolution_decrease(struct sdl_context* st_sdl) {
         SDL_GetDisplayMode(display_index, index, &mode);
 
         if(mode.w*mode.h < area) {
-            st_sdl->st_render.window_x = mode.w;
-            st_sdl->st_render.window_y = mode.h;
+            st_sdl->st_render.st_screen.w = mode.w;
+            st_sdl->st_render.st_screen.h = mode.h;
             break;
         }
     }
@@ -170,8 +176,8 @@ int sdl_resolution_decrease(struct sdl_context* st_sdl) {
     }
 
     render_resize_window(&st_sdl->st_render,
-                          st_sdl->st_render.window_x,
-                          st_sdl->st_render.window_y);
+                          st_sdl->st_render.st_screen.w,
+                          st_sdl->st_render.st_screen.h);
     SDL_SetWindowSize(st_sdl->window, mode.w, mode.h);
 
     return SUCCESS;
@@ -187,8 +193,8 @@ int sdl_fullscreen(struct sdl_context* st_sdl) {
          * Save the old resolution if the user disable fullscreen
          * later in the execution.
          */
-        st_sdl->st_render.old_x = st_sdl->st_render.window_x;
-        st_sdl->st_render.old_y = st_sdl->st_render.window_y;
+        st_sdl->st_render.st_screen_old.w = st_sdl->st_render.st_screen.w;
+        st_sdl->st_render.st_screen_old.h = st_sdl->st_render.st_screen.h;
 
         render_resize_window(&st_sdl->st_render, screen.w, screen.h);
         SDL_SetWindowSize(st_sdl->window, screen.w, screen.h);
@@ -197,11 +203,11 @@ int sdl_fullscreen(struct sdl_context* st_sdl) {
     } else {
         SDL_SetWindowFullscreen(st_sdl->window, SDL_FALSE);
         SDL_SetWindowSize(st_sdl->window,
-                          st_sdl->st_render.old_x,
-                          st_sdl->st_render.old_y);
+                          st_sdl->st_render.st_screen_old.w,
+                          st_sdl->st_render.st_screen_old.h);
         render_resize_window(&st_sdl->st_render,
-                              st_sdl->st_render.old_x,
-                              st_sdl->st_render.old_y);
+                              st_sdl->st_render.st_screen_old.w,
+                              st_sdl->st_render.st_screen_old.h);
         st_sdl->fullscreen = FALSE;
     }
 
@@ -221,7 +227,15 @@ int sdl_handle_event(struct sdl_context* st_sdl) {
             break;
 
         case SDL_KEYDOWN:
-            sdl_handle_key(st_sdl, st_sdl->event.key.keysym.sym);
+            if(st_sdl->command_mode)
+                sdl_handle_key_cmd(st_sdl, st_sdl->event.key.keysym);
+            else
+                sdl_handle_key(st_sdl, st_sdl->event.key.keysym);
+            break;
+
+        case SDL_TEXTINPUT:
+            if(st_sdl->command_mode)
+                command_append(&st_sdl->st_cmd, st_sdl->event.text.text);
             break;
 
         case SDL_MOUSEBUTTONDOWN:
@@ -242,8 +256,8 @@ int sdl_handle_event(struct sdl_context* st_sdl) {
     return SUCCESS;
 }
 
-int sdl_handle_key(struct sdl_context* st_sdl, SDL_Keycode key) {
-    switch(key) {
+int sdl_handle_key(struct sdl_context* st_sdl, SDL_Keysym key) {
+    switch(key.sym) {
     case SDLK_ESCAPE:
     case SDLK_q:
         sdl_stop(st_sdl);
@@ -256,6 +270,28 @@ int sdl_handle_key(struct sdl_context* st_sdl, SDL_Keycode key) {
         break;
     case SDLK_PAGEDOWN:
         sdl_resolution_decrease(st_sdl);
+        break;
+    case SDLK_SEMICOLON:
+        if(key.mod & KMOD_SHIFT)
+            st_sdl->command_mode = TRUE;
+        break;
+    }
+
+    return SUCCESS;
+}
+
+int sdl_handle_key_cmd(struct sdl_context* st_sdl, SDL_Keysym key) {
+    switch(key.sym) {
+    case SDLK_ESCAPE:
+        command_clear(&st_sdl->st_cmd);
+        st_sdl->command_mode = FALSE;
+        break;
+    case SDLK_BACKSPACE:
+        command_backspace(&st_sdl->st_cmd);
+        break;
+    case SDLK_RETURN:
+        command_execute(&st_sdl->st_cmd);
+        st_sdl->command_mode = FALSE;
         break;
     }
 

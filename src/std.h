@@ -1,6 +1,17 @@
 #ifndef STD_H
 #define STD_H
 
+struct dimension {
+    int w;
+    int h;
+};
+
+struct point {
+    double x;
+    double y;
+    double z;
+};
+
 /**
  * This function converts an image mono-colorized into an RGBA-colorized image.
  * The returned image must be freed after it is no longer used.

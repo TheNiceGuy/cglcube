@@ -3,9 +3,9 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <GL/glew.h>
 #include "render.h"
 #include "camera.h"
+#include "command.h"
 
 /**
  * This data structure contains variables about the main SDL context of the
@@ -19,6 +19,12 @@ struct sdl_context {
      */
     int running;
     /**
+     * Contains a bool defined in config.h about whether or not we are in
+     * command mode. If we are in command mode, all keyboard events are sent
+     * to the command structure.
+     */
+    int command_mode;
+    /**
      * Contains a bool defined in config.h that tells if the game is
      * in fullscreen mode.
      */
@@ -27,6 +33,10 @@ struct sdl_context {
      * Contains the rendering context.
      */
     struct render_context st_render;
+    /**
+     * Contains the command context.
+     */
+    struct command_context st_cmd;
 
     SDL_Event event;
     SDL_version version_compiled;
@@ -119,7 +129,16 @@ int sdl_handle_event(struct sdl_context* st_sdl);
  * @param window The structure about the event.
  * @return An error code defined in config.h.
  */
-int sdl_handle_key(struct sdl_context* st_sdl, SDL_Keycode key);
+int sdl_handle_key(struct sdl_context* st_sdl, SDL_Keysym key);
+
+/**
+ * This function handles keyboard events like a keypress when in command mode.
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ * @param window The structure about the event.
+ * @return An error code defined in config.h.
+ */
+int sdl_handle_key_cmd(struct sdl_context* st_sdl, SDL_Keysym key);
 
 /**
  * This function handles mouse button events like a click.
