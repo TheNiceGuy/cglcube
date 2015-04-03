@@ -16,6 +16,10 @@ struct text {
      */
     char* text;
     /**
+     * Contains a pointer to the rendered text in RGBA.
+     */
+    unsigned char* pixels;
+    /**
      * Contains the size of the text buffer.
      */
     int size;
@@ -44,7 +48,7 @@ struct text {
  *
  * @param st_text A pointer to a text structure.
  */
-void text_changed(struct text* st_text);
+void text_change(struct text* st_text, char* text);
 
 /**
  * This function initialises the text structure.
@@ -53,7 +57,7 @@ void text_changed(struct text* st_text);
  * @param size The size of the text buffer.
  * @return An error code defined in config.h.
  */
-int text_init(struct text* st_text, int size);
+int text_init(struct text* st_text);
 
 /**
  * This function destroys and frees the text structure.

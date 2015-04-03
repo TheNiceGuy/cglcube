@@ -2,7 +2,6 @@
 #define RENDER_H
 
 #include <SDL2/SDL_ttf.h>
-#include <pthread.h>
 #include "camera.h"
 #include "text.h"
 
@@ -55,7 +54,7 @@ struct render_context {
     /**
      * Contains the thread of the rendering context.
      */
-    pthread_t thread;
+    SDL_Thread *thread;
 };
 
 /**
@@ -89,7 +88,7 @@ void  render_resize_window(struct render_context* st_render, int x, int y);
  * @param st_sdl A void pointer to a render_context structure.
  * @return NULL
  */
-void* render_timer(void* st_render_ptr);
+int render_timer(void* st_render_ptr);
 
 /**
  * This function starts the rendering thread.

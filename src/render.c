@@ -37,16 +37,19 @@ void render_resize_window(struct render_context* st_render, int x, int y) {
     st_render->ratio = (double)st_render->window_x/(double)st_render->window_y;
 }
 
-void* render_timer(void* st_render_ptr) {
+int render_timer(void* st_render_ptr) {
+    char* fps;
     int time_ticks = 0;
     int time_delay = 0;
     int time_fps   = 0;
     int current_frame = 0;
     struct render_context* st_render = (struct render_context*)st_render_ptr;
 
-    text_init(&st_render->st_overlay_text, 16);
-    text_changed(&st_render->st_overlay_text);
-    sprintf(st_render->st_overlay_text.text, "%f", st_render->fps);/**/
+    fps = malloc(16);
+
+    sprintf(fps, "FPS: %f", st_render->fps);
+    text_init(&st_render->st_overlay_text);
+    text_change(&st_render->st_overlay_text, fps);
 
     SDL_GL_MakeCurrent(st_render->st_sdl_parent->window,
                        st_render->st_sdl_parent->render_glcontext);
@@ -70,8 +73,8 @@ void* render_timer(void* st_render_ptr) {
         if(time_ticks-time_fps > 1000) {
             st_render->fps = (float)current_frame/(time_ticks-time_fps)*1000;
 
-            sprintf(st_render->st_overlay_text.text, "FPS: %f", st_render->fps);
-            text_changed(&st_render->st_overlay_text);
+            sprintf(fps, "FPS: %f", st_render->fps);
+            text_change(&st_render->st_overlay_text, fps);
 
             current_frame = 0;
             time_fps = time_ticks;
@@ -80,8 +83,9 @@ void* render_timer(void* st_render_ptr) {
 
     SDL_GL_MakeCurrent(st_render->st_sdl_parent->window, NULL);
 
+    free(fps);
     text_destroy(&st_render->st_overlay_text);
-    return NULL;
+    return SUCCESS;
 }
 
 int render_start(struct render_context* st_render) {
@@ -89,8 +93,7 @@ int render_start(struct render_context* st_render) {
         return FAILED;
 
     st_render->running = TRUE;
-
-    pthread_create(&st_render->thread, NULL, &render_timer, st_render);
+    st_render->thread = SDL_CreateThread(render_timer, "RenderThread", st_render);
 
     return SUCCESS;
 }
@@ -100,27 +103,23 @@ int render_stop(struct render_context* st_render) {
         return FAILED;
 
     st_render->running = FALSE;
-    pthread_join(st_render->thread, NULL);
+    SDL_WaitThread(st_render->thread, NULL);
 
     return SUCCESS;
 }
 
 int render_info(struct render_context* st_render) {
-    unsigned char* pixels;
     GLuint texture;
 
     text_render(&st_render->st_overlay_text);
-
-    pixels = mono_to_RGBA(st_render->st_overlay_text.surface->pixels,
-                          st_render->st_overlay_text.surface->w,
-                          st_render->st_overlay_text.surface->h);
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                  st_render->st_overlay_text.surface->w,
                  st_render->st_overlay_text.surface->h,
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+                 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 st_render->st_overlay_text.pixels);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
@@ -150,8 +149,6 @@ int render_info(struct render_context* st_render) {
 
     glPixelZoom(1,-1);
     glRasterPos2f(0, (float)st_render->st_overlay_text.surface->h/st_render->window_y);
-
-    free(pixels);
 
     return SUCCESS;
 }

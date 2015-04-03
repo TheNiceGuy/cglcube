@@ -28,28 +28,9 @@ void sdl_init(struct sdl_context* st_sdl) {
 }
 
 int sdl_start(struct sdl_context* st_sdl) {
-    if(st_sdl->running == TRUE)
+    if(st_sdl->running)
         return FAILED;
 
-    sdl_create_opengl(st_sdl);
-    render_start(&st_sdl->st_render);
-
-    st_sdl->running = TRUE;
-    return SUCCESS;
-}
-
-int sdl_stop(struct sdl_context* st_sdl) {
-    if(st_sdl->running == FALSE)
-        return FAILED;
-
-    render_stop(&st_sdl->st_render);
-    sdl_free(st_sdl);
-
-    st_sdl->running = FALSE;
-    return SUCCESS;
-}
-
-int sdl_create_opengl(struct sdl_context* st_sdl) {
     if(SDL_Init(SDL_INIT_VIDEO) != SUCCESS) {
         printf("Unable to initialize SDL: %s\n", SDL_GetError());
         exit(FAILED);
@@ -60,8 +41,29 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
         exit(FAILED);
     }
 
+    sdl_create_opengl(st_sdl);
+    render_start(&st_sdl->st_render);
+
+    st_sdl->running = TRUE;
+    return SUCCESS;
+}
+
+int sdl_stop(struct sdl_context* st_sdl) {
+    if(!st_sdl->running)
+        return FAILED;
+
+    render_stop(&st_sdl->st_render);
+    sdl_free(st_sdl);
+
+    st_sdl->running = FALSE;
+    return SUCCESS;
+}
+
+int sdl_create_opengl(struct sdl_context* st_sdl) {
     sdl_resolution_start(st_sdl);
 
+    SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     st_sdl->window = SDL_CreateWindow(NAME, SDL_WINDOWPOS_CENTERED,
                                       SDL_WINDOWPOS_CENTERED,
                                       st_sdl->st_render.window_x,
@@ -71,21 +73,20 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
         printf("Can't create SDL window: %s\n", SDL_GetError());
         exit(FAILED);
     }
-    SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    st_sdl->window_glcontext = SDL_GL_CreateContext(st_sdl->window);
     st_sdl->render_glcontext = SDL_GL_CreateContext(st_sdl->window);
 
-    SDL_GL_MakeCurrent(st_sdl->window, st_sdl->window_glcontext);
     sdl_opengl_version(st_sdl);
-
-    glewInit();
-    if(glewInit() != GLEW_OK) {
-        printf("Failed to initialise GLEW\n");
-        return FAILED;
-    }
     SDL_GL_SetSwapInterval(0);
+    SDL_GL_MakeCurrent(st_sdl->window, NULL);
+
+    return SUCCESS;
+}
+
+int sdl_free(struct sdl_context* st_sdl) {
+    SDL_GL_DeleteContext(st_sdl->render_glcontext);
+    SDL_DestroyWindow(st_sdl->window);
+    SDL_Quit();
 
     return SUCCESS;
 }
@@ -203,15 +204,6 @@ int sdl_fullscreen(struct sdl_context* st_sdl) {
                               st_sdl->st_render.old_y);
         st_sdl->fullscreen = FALSE;
     }
-
-    return SUCCESS;
-}
-
-int sdl_free(struct sdl_context* st_sdl) {
-    SDL_GL_DeleteContext(st_sdl->window_glcontext);
-    SDL_GL_DeleteContext(st_sdl->render_glcontext);
-    SDL_DestroyWindow(st_sdl->window);
-    SDL_Quit();
 
     return SUCCESS;
 }

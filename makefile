@@ -25,15 +25,15 @@ LINUX_CC=gcc
 LINUX_LD=gcc
 LINUX_CCFLAGS=-I/usr/include/SDL2 -I/usr/include -D_REENTRANT -D__LINUX__ \
               -Wall -pedantic -g
-LINUX_LDFLAGS=-L/usr/lib -lm -lpthread -lSDL2 -lSDL2_ttf -lGL -lGLU -lGLEW
+LINUX_LDFLAGS=-L/usr/lib -lm -lSDL2 -lSDL2_ttf -lGL -lGLU
 
 WIN32_CC=i686-w64-mingw32-gcc
 WIN32_LD=i686-w64-mingw32-gcc
 WIN32_LIBS_LOC=/usr/i686-w64-mingw32
-WIN32_LIBS=SDL2.dll,SDL2_ttf.dll,libwinpthread-1.dll,libfreetype-6.dll,glew32.dll
+WIN32_LIBS=SDL2.dll,SDL2_ttf.dll,libfreetype-6.dll
 WIN32_CCFLAGS=-I$(WIN32_LIBS_LOC)/include/SDL2 -Dmain=SDL_main -D__WIN32__ \
               -DGLEW_STATIC -Wall -pedantic -g -static
-WIN32_LDFLAGS=-L$(WIN32_LIBS_LOC)/lib -lmingw32 -mwindows -lwinpthread \
+WIN32_LDFLAGS=-L$(WIN32_LIBS_LOC)/lib -lmingw32 -mwindows \
               -lSDL2main -lSDL2 -lSDL2_ttf -lopengl32 -lglu32 -lglew32 -lm
 
 ifndef $(TARGET)
