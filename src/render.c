@@ -91,7 +91,7 @@ int render_timer(void* st_render_ptr) {
 
 int render_start(struct render_context* st_render) {
     if(st_render->running)
-        return FAILED;
+        return FAIL;
 
     st_render->running = TRUE;
     st_render->thread = SDL_CreateThread(render_timer, "RenderThread", st_render);
@@ -101,7 +101,7 @@ int render_start(struct render_context* st_render) {
 
 int render_stop(struct render_context* st_render) {
     if(!st_render->running)
-        return FAILED;
+        return FAIL;
 
     st_render->running = FALSE;
     SDL_WaitThread(st_render->thread, NULL);

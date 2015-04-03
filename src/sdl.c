@@ -32,16 +32,16 @@ void sdl_init(struct sdl_context* st_sdl) {
 
 int sdl_start(struct sdl_context* st_sdl) {
     if(st_sdl->running)
-        return FAILED;
+        return FAIL;
 
     if(SDL_Init(SDL_INIT_VIDEO) != SUCCESS) {
         printf("Unable to initialize SDL: %s\n", SDL_GetError());
-        exit(FAILED);
+        exit(FAIL);
     }
 
     if(TTF_Init() != SUCCESS) {
         printf("TTF_Init: %s\n", TTF_GetError());
-        exit(FAILED);
+        exit(FAIL);
     }
 
     sdl_create_opengl(st_sdl);
@@ -53,7 +53,7 @@ int sdl_start(struct sdl_context* st_sdl) {
 
 int sdl_stop(struct sdl_context* st_sdl) {
     if(!st_sdl->running)
-        return FAILED;
+        return FAIL;
 
     render_stop(&st_sdl->st_render);
     command_free(&st_sdl->st_cmd);
@@ -77,7 +77,7 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
                                       SDL_WINDOW_OPENGL);
     if(st_sdl->window == NULL) {
         printf("Can't create SDL window: %s\n", SDL_GetError());
-        return FAILED;
+        return FAIL;
     }
 
     st_sdl->render_glcontext = SDL_GL_CreateContext(st_sdl->window);
@@ -216,7 +216,7 @@ int sdl_fullscreen(struct sdl_context* st_sdl) {
 
 int sdl_handle_event(struct sdl_context* st_sdl) {
     if(!st_sdl->running)
-        return FAILED;
+        return FAIL;
 
     while (st_sdl->running) {
         SDL_WaitEvent(&st_sdl->event);

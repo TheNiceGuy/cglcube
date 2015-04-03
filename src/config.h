@@ -8,16 +8,6 @@
     #define NAME "CGLCube-WIN32"
 #endif
 
-/*
- * Remove gcc's warning about redefined
- */
-#ifdef SUCCESS
-    #undef SUCCESS
-#endif
-#ifdef FAILED
-    #undef FAILED
-#endif
-
 #define DEFAULT_X 3.5
 #define DEFAULT_Y 3.5
 #define DEFAULT_Z 3.5
@@ -43,6 +33,6 @@
 /**
  * Defines the error code for failure.
  */
-#define FAILED  1
+#define FAIL 1
 
 /** @file */

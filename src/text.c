@@ -13,7 +13,7 @@ int text_init(struct text* st_text) {
     st_text->font = TTF_OpenFont(DEFAULT_FONT, DEFAULT_SIZE);
     if(st_text->font == NULL) {
         printf("%s", TTF_GetError());
-        return FAILED;
+        return FAIL;
     }
 
     TTF_SetFontStyle(st_text->font, TTF_STYLE_NORMAL);
@@ -55,7 +55,7 @@ int text_render(struct text* st_text) {
                             st_text->text, st_text->color);
     if(st_text->surface == NULL) {
         printf("%s", TTF_GetError());
-        return FAILED;
+        return FAIL;
     }
 
     st_text->pixels = mono_to_RGBA(st_text->surface->pixels,
