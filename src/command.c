@@ -14,11 +14,15 @@ void command_free(struct command_context* st_cmd) {
 
 void command_clear(struct command_context* st_cmd) {
     st_cmd->cursor = 0;
-    st_cmd->text[st_cmd->cursor] = '\0';
+    st_cmd->text[st_cmd->cursor+0] = ' ';
+    st_cmd->text[st_cmd->cursor+1] = '\0';
 }
 
 int command_append(struct command_context* st_cmd, char* input) {
     int i = 0;
+
+    if(*(input) == ':' && st_cmd->cursor != 0)
+        return FAIL;
 
     while(input[i] != '\0') {
         st_cmd->text[st_cmd->cursor] = input[i];
@@ -29,17 +33,21 @@ int command_append(struct command_context* st_cmd, char* input) {
     }
     st_cmd->text[st_cmd->cursor] = '\0';
 
-    printf("%s\n", st_cmd->text);
-
     return SUCCESS;
 }
 
 int command_backspace(struct command_context* st_cmd) {
     if(st_cmd->cursor > 0)
         st_cmd->cursor--;
-    st_cmd->text[st_cmd->cursor] = '\0';
 
-    printf("%s\n", st_cmd->text);
+    if(st_cmd->cursor == 0) {
+        st_cmd->text[st_cmd->cursor  ] = ' ';
+        st_cmd->text[st_cmd->cursor+1] = '\0';
+
+        return SUCCESS;
+    }
+
+    st_cmd->text[st_cmd->cursor  ] = '\0';
 
     return SUCCESS;
 }

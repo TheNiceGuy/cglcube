@@ -21,6 +21,6 @@ struct point {
  * @param h The height of the image.
  * @return A void pointer to the RGBA image.
  */
-void* mono_to_RGBA(void* pixels, int w, int h);
+void* mono_to_RGBA(void* source, int w, int h);
 
 #endif

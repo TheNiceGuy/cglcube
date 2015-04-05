@@ -36,9 +36,13 @@ struct render_context {
      */
     struct camera_context st_camera;
     /**
-     * Contains the text rendered on the screen.
+     * Contains the text fps rendered on the screen.
      */
     struct text st_text_fps;
+    /**
+     * Contains the text cmd rendered on the screen.
+     */
+    struct text st_text_cmd;
     /**
      * Points to the parent SDL context of the rendering context.
      */
@@ -46,7 +50,8 @@ struct render_context {
     /**
      * Contains the thread of the rendering context.
      */
-    SDL_Thread *thread;
+    SDL_Thread* thread;
+    SDL_mutex*  mutex;
 };
 
 /**

@@ -1,7 +1,7 @@
 #include "config.h"
 #include "sdl.h"
 
-void sdl_display_version(struct sdl_context* st_sdl) {
+void sdl_version(struct sdl_context* st_sdl) {
     SDL_VERSION(&st_sdl->version_compiled);
     SDL_GetVersion(&st_sdl->version_linked);
 
@@ -17,6 +17,22 @@ void sdl_display_version(struct sdl_context* st_sdl) {
 
 void sdl_opengl_version(struct sdl_context* st_sdl) {
     printf("OpenGL version:\t\t %s\n", glGetString(GL_VERSION));
+}
+
+void sdl_ttf_version(struct sdl_context* st_sdl) {
+    SDL_version        compile_version;
+    SDL_version const *link_version = TTF_Linked_Version();
+
+    SDL_TTF_VERSION(&compile_version);
+
+    printf("TTF compiled version:\t %d.%d.%d\n",
+            compile_version.major,
+            compile_version.minor,
+            compile_version.patch);
+    printf("TTF linked version:\t %d.%d.%d\n",
+            link_version->major,
+            link_version->minor,
+            link_version->patch);
 }
 
 void sdl_init(struct sdl_context* st_sdl) {
@@ -38,13 +54,17 @@ int sdl_start(struct sdl_context* st_sdl) {
         printf("Unable to initialize SDL: %s\n", SDL_GetError());
         exit(FAIL);
     }
+    sdl_version(st_sdl);
 
     if(TTF_Init() != SUCCESS) {
         printf("TTF_Init: %s\n", TTF_GetError());
         exit(FAIL);
     }
+    sdl_ttf_version(st_sdl);
 
     sdl_create_opengl(st_sdl);
+    sdl_opengl_version(st_sdl);
+
     render_start(&st_sdl->st_render);
 
     st_sdl->running = TRUE;
@@ -81,16 +101,17 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
     }
 
     st_sdl->render_glcontext = SDL_GL_CreateContext(st_sdl->window);
+    st_sdl->window_glcontext = SDL_GL_CreateContext(st_sdl->window);
 
-    sdl_opengl_version(st_sdl);
     SDL_GL_SetSwapInterval(0);
-    SDL_GL_MakeCurrent(st_sdl->window, NULL);
+    SDL_GL_MakeCurrent(st_sdl->window, st_sdl->window_glcontext);
 
     return SUCCESS;
 }
 
 int sdl_free(struct sdl_context* st_sdl) {
     SDL_GL_DeleteContext(st_sdl->render_glcontext);
+    SDL_GL_DeleteContext(st_sdl->window_glcontext);
     SDL_DestroyWindow(st_sdl->window);
     SDL_Quit();
 
@@ -134,6 +155,8 @@ int sdl_resolution_increase(struct sdl_context* st_sdl) {
     for(index = total_index; index >= 0 ; index--) {
         SDL_GetDisplayMode(display_index, index, &mode);
 
+        printf("%d %d %d\n", mode.w, mode.h, mode.w*mode.h);
+
         if(mode.w*mode.h > area) {
             st_sdl->st_render.st_screen.w = mode.w;
             st_sdl->st_render.st_screen.h = mode.h;
@@ -141,10 +164,12 @@ int sdl_resolution_increase(struct sdl_context* st_sdl) {
         }
     }
 
+    SDL_LockMutex(st_sdl->st_render.mutex);
     render_resize_window(&st_sdl->st_render,
                           st_sdl->st_render.st_screen.w,
                           st_sdl->st_render.st_screen.h);
     SDL_SetWindowSize(st_sdl->window, mode.w, mode.h);
+    SDL_UnlockMutex(st_sdl->st_render.mutex);
 
     return SUCCESS;
 }
@@ -171,14 +196,15 @@ int sdl_resolution_decrease(struct sdl_context* st_sdl) {
      * Disable fullscreen if it is enabled.
      */
     if(st_sdl->fullscreen) {
-        SDL_SetWindowFullscreen(st_sdl->window, SDL_FALSE);
         st_sdl->fullscreen = FALSE;
     }
 
+    SDL_LockMutex(st_sdl->st_render.mutex);
     render_resize_window(&st_sdl->st_render,
                           st_sdl->st_render.st_screen.w,
                           st_sdl->st_render.st_screen.h);
     SDL_SetWindowSize(st_sdl->window, mode.w, mode.h);
+    SDL_UnlockMutex(st_sdl->st_render.mutex);
 
     return SUCCESS;
 }
@@ -188,6 +214,7 @@ int sdl_fullscreen(struct sdl_context* st_sdl) {
 
     SDL_GetDisplayBounds(0, &screen);
 
+    SDL_LockMutex(st_sdl->st_render.mutex);
     if(!st_sdl->fullscreen) {
         /*
          * Save the old resolution if the user disable fullscreen
@@ -198,10 +225,8 @@ int sdl_fullscreen(struct sdl_context* st_sdl) {
 
         render_resize_window(&st_sdl->st_render, screen.w, screen.h);
         SDL_SetWindowSize(st_sdl->window, screen.w, screen.h);
-        SDL_SetWindowFullscreen(st_sdl->window, SDL_TRUE);
         st_sdl->fullscreen = TRUE;
     } else {
-        SDL_SetWindowFullscreen(st_sdl->window, SDL_FALSE);
         SDL_SetWindowSize(st_sdl->window,
                           st_sdl->st_render.st_screen_old.w,
                           st_sdl->st_render.st_screen_old.h);
@@ -210,6 +235,7 @@ int sdl_fullscreen(struct sdl_context* st_sdl) {
                               st_sdl->st_render.st_screen_old.h);
         st_sdl->fullscreen = FALSE;
     }
+    SDL_UnlockMutex(st_sdl->st_render.mutex);
 
     return SUCCESS;
 }
@@ -234,8 +260,11 @@ int sdl_handle_event(struct sdl_context* st_sdl) {
             break;
 
         case SDL_TEXTINPUT:
-            if(st_sdl->command_mode)
-                command_append(&st_sdl->st_cmd, st_sdl->event.text.text);
+            if(st_sdl->command_mode) {
+                if(!command_append(&st_sdl->st_cmd, st_sdl->event.text.text))
+                    text_change(&st_sdl->st_render.st_text_cmd,
+                                 st_sdl->st_cmd.text);
+            }
             break;
 
         case SDL_MOUSEBUTTONDOWN:
@@ -272,8 +301,11 @@ int sdl_handle_key(struct sdl_context* st_sdl, SDL_Keysym key) {
         sdl_resolution_decrease(st_sdl);
         break;
     case SDLK_SEMICOLON:
-        if(key.mod & KMOD_SHIFT)
+        if(key.mod & KMOD_SHIFT) {
             st_sdl->command_mode = TRUE;
+            if(!command_append(&st_sdl->st_cmd, ":\0"))
+                text_change(&st_sdl->st_render.st_text_cmd, st_sdl->st_cmd.text);
+        }
         break;
     }
 
@@ -283,15 +315,18 @@ int sdl_handle_key(struct sdl_context* st_sdl, SDL_Keysym key) {
 int sdl_handle_key_cmd(struct sdl_context* st_sdl, SDL_Keysym key) {
     switch(key.sym) {
     case SDLK_ESCAPE:
-        command_clear(&st_sdl->st_cmd);
         st_sdl->command_mode = FALSE;
+        command_clear(&st_sdl->st_cmd);
+        text_change(&st_sdl->st_render.st_text_cmd, st_sdl->st_cmd.text);
         break;
     case SDLK_BACKSPACE:
         command_backspace(&st_sdl->st_cmd);
+        text_change(&st_sdl->st_render.st_text_cmd, st_sdl->st_cmd.text);
         break;
     case SDLK_RETURN:
-        command_execute(&st_sdl->st_cmd);
         st_sdl->command_mode = FALSE;
+        command_execute(&st_sdl->st_cmd);
+        text_change(&st_sdl->st_render.st_text_cmd, st_sdl->st_cmd.text);
         break;
     }
 

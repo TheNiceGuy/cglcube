@@ -48,12 +48,11 @@ int render_timer(void* st_render_ptr) {
 
     fps = malloc(16);
 
-    sprintf(fps, "FPS: %f", st_render->fps);
-    text_init(&st_render->st_text_fps);
-    text_change(&st_render->st_text_fps, fps);
-
     SDL_GL_MakeCurrent(st_render->st_sdl_parent->window,
                        st_render->st_sdl_parent->render_glcontext);
+
+    text_init(&st_render->st_text_fps, TOP | LEFT);
+    text_init(&st_render->st_text_cmd, BOTTOM | LEFT);
 
     while(st_render->running) {
         time_ticks = SDL_GetTicks();
@@ -62,7 +61,9 @@ int render_timer(void* st_render_ptr) {
          * Draw the image.
          */
         if(time_ticks-time_delay > 1000/120) {
+            SDL_LockMutex(st_render->mutex);
             render_window(st_render);
+            SDL_UnlockMutex(st_render->mutex);
 
             current_frame++;
             time_delay = time_ticks;
@@ -75,6 +76,7 @@ int render_timer(void* st_render_ptr) {
             st_render->fps = (float)current_frame/(time_ticks-time_fps)*1000;
 
             sprintf(fps, "FPS: %f", st_render->fps);
+
             text_change(&st_render->st_text_fps, fps);
 
             current_frame = 0;
@@ -86,6 +88,7 @@ int render_timer(void* st_render_ptr) {
 
     free(fps);
     text_destroy(&st_render->st_text_fps);
+    text_destroy(&st_render->st_text_cmd);
     return SUCCESS;
 }
 
@@ -94,6 +97,7 @@ int render_start(struct render_context* st_render) {
         return FAIL;
 
     st_render->running = TRUE;
+    st_render->mutex   = SDL_CreateMutex();
     st_render->thread = SDL_CreateThread(render_timer, "RenderThread", st_render);
 
     return SUCCESS;
@@ -105,6 +109,7 @@ int render_stop(struct render_context* st_render) {
 
     st_render->running = FALSE;
     SDL_WaitThread(st_render->thread, NULL);
+    SDL_DestroyMutex(st_render->mutex);
 
     return SUCCESS;
 }
@@ -118,6 +123,7 @@ int render_info(struct render_context* st_render) {
      * Render every text on the screen.
      */
     text_draw(&st_render->st_text_fps, &st_render->st_screen);
+    text_draw(&st_render->st_text_cmd, &st_render->st_screen);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);

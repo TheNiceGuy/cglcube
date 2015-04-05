@@ -43,7 +43,7 @@ struct sdl_context {
     SDL_version version_linked;
     SDL_Window *window;
     SDL_GLContext render_glcontext;
-    SDL_atomic_t glcontext_ready;
+    SDL_GLContext window_glcontext;
 };
 
 /**
@@ -52,7 +52,7 @@ struct sdl_context {
  *
  * @param st_sdl A pointer to an sdl_context structure.
  */
-void sdl_display_version(struct sdl_context* st_sdl);
+void sdl_version(struct sdl_context* st_sdl);
 
 /**
  * This function print to stdout the version OpenGL in SDL. It must be called in
@@ -61,6 +61,8 @@ void sdl_display_version(struct sdl_context* st_sdl);
  * @param st_sdl A pointer to an sdl_context structure.
  */
 void sdl_opengl_version(struct sdl_context* st_sdl);
+
+void sdl_ttf_version(struct sdl_context* st_sdl);
 
 /**
  * This function initialises the SDL context with safe defaults.

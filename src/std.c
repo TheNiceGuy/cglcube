@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "config.h"
 #include "std.h"
 
 void* mono_to_RGBA(void* source, int w, int h) {
