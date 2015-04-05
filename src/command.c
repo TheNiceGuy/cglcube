@@ -37,7 +37,7 @@ int command_append(struct command_context* st_cmd, char* input) {
 }
 
 int command_backspace(struct command_context* st_cmd) {
-    if(st_cmd->cursor > 0)
+    if(st_cmd->cursor > 1)
         st_cmd->cursor--;
 
     if(st_cmd->cursor == 0) {

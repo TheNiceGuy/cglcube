@@ -155,8 +155,6 @@ int sdl_resolution_increase(struct sdl_context* st_sdl) {
     for(index = total_index; index >= 0 ; index--) {
         SDL_GetDisplayMode(display_index, index, &mode);
 
-        printf("%d %d %d\n", mode.w, mode.h, mode.w*mode.h);
-
         if(mode.w*mode.h > area) {
             st_sdl->st_render.st_screen.w = mode.w;
             st_sdl->st_render.st_screen.h = mode.h;
