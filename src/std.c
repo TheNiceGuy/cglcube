@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "config.h"
 #include "std.h"
 
@@ -24,4 +26,93 @@ void* mono_to_RGBA(void* source, int w, int h) {
     }
 
     return (void*)pixels;
+}
+
+void split_argument(char*** argv, int* argc, char* string) {
+    int i, j, k;
+
+    /*
+     * Strip useless spaces at the beginning.
+     */
+    i = 0;
+    while(string[i] != '\0') {
+        i++;
+        if(string[i-1] == ' ') {
+            string++;
+            i = 0;
+        } else
+            break;
+    }
+
+    /*
+     * Strip useless spaces at the end.
+     */
+    i = 0;
+    while(string[i] != '\0')
+        i++;
+    i--;
+    k = i;
+    while(string[i] != '\0') {
+        i--;
+        if(string[i+1] == ' ') {
+            string[i+1] = '\0';
+            k--;
+            i = k;
+        } else
+            break;
+    }
+
+    /*
+     * Remove useless spaces between arguments.
+     */
+    i = 0;
+    while(string[i] != '\0') {
+        if(string[i] == ' ' && string[i+1] == ' ') {
+            k = i;
+            while(string[k] != '\0') {
+                string[k] = string[k+1];
+                k++;
+            }
+            i = 0;
+        }
+
+        i++;
+    }
+
+    /*
+     * Find the number of argument by counting the number of separations.
+     */
+    i = 0;
+    j = 0;
+    while(string[i] != '\0') {
+        if(string[i] == ' ')
+            j++;
+        i++;
+    }
+    j++;
+
+    *argv = malloc(j*sizeof(char*));
+
+    /*
+     * Dynamically allocate memory for each argument.
+     */
+    i = 0;
+    j = 0;
+    k = 1;
+    while(string[i] != '\0') {
+        if(string[i+1] != ' ' && string[i+1] != '\0')
+            k++;
+        else {
+            (*argv)[j] = malloc(k*sizeof(char)+1);
+            (*argv)[j][k] = '\0';
+
+            memcpy((*argv)[j], string+i-k+1, k);
+
+            j++;
+            k = 0;
+        }
+        i++;
+    }
+
+    *argc = j;
 }

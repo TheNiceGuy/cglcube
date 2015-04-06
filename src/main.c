@@ -3,7 +3,7 @@
 #include "render.h"
 #include "std.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     struct sdl_context st_sdl;
 
     sdl_init(&st_sdl);

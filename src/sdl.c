@@ -44,6 +44,7 @@ void sdl_init(struct sdl_context* st_sdl) {
     render_link_sdl(&st_sdl->st_render, st_sdl);
 
     command_init(&st_sdl->st_cmd);
+    command_link_sdl(&st_sdl->st_cmd, st_sdl);
 }
 
 int sdl_start(struct sdl_context* st_sdl) {
@@ -202,6 +203,15 @@ int sdl_resolution_decrease(struct sdl_context* st_sdl) {
                           st_sdl->st_render.st_screen.w,
                           st_sdl->st_render.st_screen.h);
     SDL_SetWindowSize(st_sdl->window, mode.w, mode.h);
+    SDL_UnlockMutex(st_sdl->st_render.mutex);
+
+    return SUCCESS;
+}
+
+int sdl_resolution_set(struct sdl_context* st_sdl, int w, int h) {
+    SDL_LockMutex(st_sdl->st_render.mutex);
+    render_resize_window(&st_sdl->st_render, w, h);
+    SDL_SetWindowSize(st_sdl->window, w, h);
     SDL_UnlockMutex(st_sdl->st_render.mutex);
 
     return SUCCESS;

@@ -98,6 +98,8 @@ int sdl_create_opengl(struct sdl_context* st_sdl);
 
 int sdl_resolution_start(struct sdl_context* st_sdl);
 int sdl_resolution_increase(struct sdl_context* st_sdl);
+int sdl_resolution_set(struct sdl_context* st_sdl, int w, int h);
+
 
 /**
  * This function toggles the fullscreen mode in the game.
