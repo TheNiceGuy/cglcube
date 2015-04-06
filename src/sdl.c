@@ -270,9 +270,7 @@ int sdl_handle_event(struct sdl_context* st_sdl) {
 
         case SDL_TEXTINPUT:
             if(st_sdl->command_mode) {
-                if(!command_append(&st_sdl->st_cmd, st_sdl->event.text.text))
-                    text_change(&st_sdl->st_render.st_text_cmd,
-                                 st_sdl->st_cmd.text);
+                command_append(&st_sdl->st_cmd, st_sdl->event.text.text);
             }
             break;
 

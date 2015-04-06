@@ -53,6 +53,7 @@ int command_append(struct command_context* st_cmd, char* input) {
         i++;
     }
     st_cmd->text[st_cmd->cursor] = '\0';
+    text_change(st_cmd->st_text, st_cmd->text);
 
     return SUCCESS;
 }
