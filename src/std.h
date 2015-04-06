@@ -23,6 +23,15 @@ struct point {
  */
 void* mono_to_RGBA(void* source, int w, int h);
 
+/**
+ * This function parses the arguments from a string into multiple dynamically
+ * allocated string. All arguments are returned in a argv and argc contains the
+ * number of arguments parsed.
+ *
+ * @param argv A pointer to an array of string.
+ * @param argc A pointer to an int.
+ * @param string A pointer to the string that needs parsing.
+ */
 void parse_argument(char*** argv, int* argc, char* string);
 
 #endif

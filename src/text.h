@@ -49,6 +49,9 @@ struct text {
      * Contains the surface returned by TTF_RenderText*.
      */
     SDL_Surface* surface;
+    /**
+     * Contains a mutex to make text handling thread-safe.
+     */
     SDL_mutex*  mutex;
     /**
      * Contains the font for rendering text.
@@ -57,20 +60,27 @@ struct text {
 };
 
 /**
- * This tells the structure that it has been updated and
- * needs to be re-rendered.
+ * This function changes the text, renders it and binds the OpenGL texture.
  *
  * @param st_text A pointer to a text structure.
+ * @param text A pointer to the new text.
  */
 void text_change(struct text* st_text, char* text);
 
+/**
+ * This function moves the the text to its relative position and the screen
+ * dimension.
+ *
+ * @param st_text A pointer to a text structure.
+ * @param st_screen A pointer to a dimension structure.
+ */
 void text_move(struct text* st_text, struct dimension* st_screen);
 
 /**
  * This function initialises the text structure.
  *
  * @param st_text A pointer to a text structure.
- * @param size The size of the text buffer.
+ * @param flags_pos The size of the text buffer.
  * @return An error code defined in config.h.
  */
 int text_init(struct text* st_text, enum position flags_pos);
@@ -91,8 +101,22 @@ int text_destroy(struct text* st_text);
  */
 int text_render(struct text* st_text);
 
+/**
+ * This function binds the OpenGL texture of the text.
+ *
+ * @param st_text A pointer to a text structure.
+ * @return An error code defined in config.h.
+ */
 int text_bind_texture(struct text* st_text);
 
+/**
+ * This function draws the OpenGL texture based on the screen dimension. OpenGL
+ * must be in orthogonal mode in order to draw it on the screen.
+ *
+ * @param st_text A pointer to a text structure.
+ * @param st_screen A pointer to a dimension structure.
+ * @return An error code defined in config.h.
+ */
 int text_draw(struct text* st_text, struct dimension* st_screen);
 
 #endif

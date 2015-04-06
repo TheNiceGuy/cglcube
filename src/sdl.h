@@ -62,6 +62,12 @@ void sdl_version(struct sdl_context* st_sdl);
  */
 void sdl_opengl_version(struct sdl_context* st_sdl);
 
+/**
+ * This function print to stdout the version of the linked and compiled versions
+ * of SDL_TTF.
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ */
 void sdl_ttf_version(struct sdl_context* st_sdl);
 
 /**
@@ -96,10 +102,40 @@ int sdl_stop(struct sdl_context* st_sdl);
  */
 int sdl_create_opengl(struct sdl_context* st_sdl);
 
+/**
+ * This function puts the resolution to its lowest without calling
+ * SDL_SetWindowSize().
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ * @return An error code defined in config.h.
+ */
 int sdl_resolution_start(struct sdl_context* st_sdl);
-int sdl_resolution_increase(struct sdl_context* st_sdl);
-int sdl_resolution_set(struct sdl_context* st_sdl, int w, int h);
 
+/**
+ * This function increases the resolution of the window to the next mode.
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ * @return An error code defined in config.h.
+ */
+int sdl_resolution_increase(struct sdl_context* st_sdl);
+
+/**
+ * This function decreases the resolution of the window to the previous mode.
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ * @return An error code defined in config.h.
+ */
+int sdl_resolution_decrease(struct sdl_context* st_sdl);
+
+/**
+ * This function sets the resolution of the window.
+ *
+ * @param st_sdl A pointer to an sdl_context structure.
+ * @param w The width of the window.
+ * @param h The height of the window.
+ * @return An error code defined in config.h.
+ */
+int sdl_resolution_set(struct sdl_context* st_sdl, int w, int h);
 
 /**
  * This function toggles the fullscreen mode in the game.
