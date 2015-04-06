@@ -39,10 +39,9 @@ int text_init(struct text* st_text, enum position flags_pos) {
         return FAIL;
     }
 
-/*    TTF_SetFontStyle(st_text->font, TTF_STYLE_NORMAL);
-    TTF_SetFontHinting(st_text->font, TTF_HINTING_MONO);
-    TTF_SetFontKerning(st_text->font, 0);
-    TTF_SetFontOutline(st_text->font, 0);*/
+    TTF_SetFontStyle(st_text->font, TTF_STYLE_NORMAL);
+    TTF_SetFontKerning(st_text->font, 1);
+    TTF_SetFontOutline(st_text->font, 0);
 
     st_text->text = malloc(BUFFER);
     st_text->color.r = 0;

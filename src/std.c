@@ -28,7 +28,7 @@ void* mono_to_RGBA(void* source, int w, int h) {
     return (void*)pixels;
 }
 
-void split_argument(char*** argv, int* argc, char* string) {
+void parse_argument(char*** argv, int* argc, char* string) {
     int i, j, k;
 
     /*

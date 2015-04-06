@@ -45,6 +45,7 @@ void sdl_init(struct sdl_context* st_sdl) {
 
     command_init(&st_sdl->st_cmd);
     command_link_sdl(&st_sdl->st_cmd, st_sdl);
+    command_link_text(&st_sdl->st_cmd, &st_sdl->st_render.st_text_cmd);
 }
 
 int sdl_start(struct sdl_context* st_sdl) {
@@ -324,17 +325,14 @@ int sdl_handle_key_cmd(struct sdl_context* st_sdl, SDL_Keysym key) {
     switch(key.sym) {
     case SDLK_ESCAPE:
         st_sdl->command_mode = FALSE;
-        command_clear(&st_sdl->st_cmd);
-        text_change(&st_sdl->st_render.st_text_cmd, st_sdl->st_cmd.text);
+        command_cancel(&st_sdl->st_cmd);
         break;
     case SDLK_BACKSPACE:
         command_backspace(&st_sdl->st_cmd);
-        text_change(&st_sdl->st_render.st_text_cmd, st_sdl->st_cmd.text);
         break;
     case SDLK_RETURN:
         st_sdl->command_mode = FALSE;
         command_execute(&st_sdl->st_cmd);
-        text_change(&st_sdl->st_render.st_text_cmd, st_sdl->st_cmd.text);
         break;
     }
 
