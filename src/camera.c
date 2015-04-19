@@ -54,9 +54,9 @@ void camera_zoom(struct camera_context* st_camera, int delta) {
 
 void camera_rotate_scene(struct camera_context* st_camera, int delta) {
     if(st_camera->flip)
-        st_camera->angle_scene = st_camera->angle_scene - delta;
-    else
         st_camera->angle_scene = st_camera->angle_scene + delta;
+    else
+        st_camera->angle_scene = st_camera->angle_scene - delta;
 
     if(st_camera->angle_scene <= -360)
         st_camera->angle_scene = st_camera->angle_scene + 360;
@@ -76,11 +76,11 @@ void camera_rotate_view(struct camera_context* st_camera, int delta) {
 }
 
 void camera_update_position(struct camera_context* st_camera) {
-    st_camera->x = st_camera->distance*
-                   cos((st_camera->angle_view*M_PI)/180);
-    st_camera->y = 0;
-    st_camera->z = st_camera->distance*
+    st_camera->x = 0;
+    st_camera->y = st_camera->distance*
                    sin((st_camera->angle_view*M_PI)/180);
+    st_camera->z = st_camera->distance*
+                   cos((st_camera->angle_view*M_PI)/180);
 
 }
 
@@ -93,15 +93,15 @@ int camera_update(struct camera_context* st_camera) {
         gluLookAt(st_camera->x,
                   st_camera->y,
                   st_camera->z,
-                  0, 0, 0, 0, 0, 1);
+                  0, 0, 0, 0, 1, 0);
     } else {
         gluLookAt(st_camera->x,
                   st_camera->y,
                   st_camera->z,
-                  0, 0, 0, 0, 0,-1);
+                  0, 0, 0, 0,-1, 0);
     }
 
-    glRotated(st_camera->angle_scene, 0, 0, 1);
+    glRotated(st_camera->angle_scene, 0,-1, 0);
 
     return SUCCESS;
 }

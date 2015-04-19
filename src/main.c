@@ -1,7 +1,5 @@
 #include "config.h"
 #include "sdl.h"
-#include "render.h"
-#include "std.h"
 
 int main(int argc, char* argv[]) {
     struct sdl_context st_sdl;

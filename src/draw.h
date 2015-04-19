@@ -9,5 +9,12 @@
  */
 void draw_2Dgrid(int count, float distance);
 
+/**
+ * This function draws a guide using the current matrix. It usefull when
+ * analyzing how the matrix behaves. 
+ *
+ */
+void draw_guide();
+
 /** @file */
 #endif

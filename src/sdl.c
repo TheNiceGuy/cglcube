@@ -1,5 +1,6 @@
 #include "config.h"
 #include "sdl.h"
+#include "cube.h"
 
 void sdl_version(struct sdl_context* st_sdl) {
     SDL_VERSION(&st_sdl->version_compiled);
@@ -46,6 +47,9 @@ void sdl_init(struct sdl_context* st_sdl) {
     command_init(&st_sdl->st_cmd);
     command_link_sdl(&st_sdl->st_cmd, st_sdl);
     command_link_text(&st_sdl->st_cmd, &st_sdl->st_render.st_text_cmd);
+
+    cube_init(&st_sdl->st_cube);
+    cube_link_sdl(&st_sdl->st_cube, st_sdl);
 }
 
 int sdl_start(struct sdl_context* st_sdl) {
@@ -79,6 +83,7 @@ int sdl_stop(struct sdl_context* st_sdl) {
 
     render_stop(&st_sdl->st_render);
     command_free(&st_sdl->st_cmd);
+    cube_destroy(&st_sdl->st_cube);
     sdl_free(st_sdl);
 
     st_sdl->running = FALSE;
@@ -103,6 +108,7 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
     }
 
     st_sdl->render_glcontext = SDL_GL_CreateContext(st_sdl->window);
+    glEnable(GL_DEPTH_TEST);
     st_sdl->window_glcontext = SDL_GL_CreateContext(st_sdl->window);
 
     SDL_GL_SetSwapInterval(0);

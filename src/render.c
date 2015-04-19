@@ -4,10 +4,10 @@
     #include <windows.h>
 #endif
 #include "config.h"
-#include "render.h"
 #include "sdl.h"
-#include "camera.h"
+#include "render.h"
 #include "draw.h"
+#include "camera.h"
 #include "std.h"
 
 void render_init(struct render_context* st_render) {
@@ -152,7 +152,8 @@ int render_window(struct render_context* st_render) {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    draw_2Dgrid(10, 0.2);
+    draw_2Dgrid(20, 0.2);
+    cube_draw(&st_render->st_sdl_parent->st_cube);
 
     render_overlay(st_render);
 

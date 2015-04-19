@@ -1,6 +1,8 @@
 #ifndef STD_H
 #define STD_H
 
+#include <stdio.h>
+
 struct dimension {
     int w;
     int h;
@@ -10,6 +12,12 @@ struct point {
     double x;
     double y;
     double z;
+};
+
+struct ipoint {
+    int x;
+    int y;
+    int z;
 };
 
 /**
@@ -33,5 +41,16 @@ void* mono_to_RGBA(void* source, int w, int h);
  * @param string A pointer to the string that needs parsing.
  */
 void parse_argument(char*** argv, int* argc, char* string);
+
+/**
+ * This function reads a file. It makes sure that a word or a line is not
+ * splitted by the size of the buffer.
+ *
+ * @param object A pointer to a file descriptor.
+ * @param buffer A pointer to the buffer.
+ * @param string The current position in the file.
+ * @return The number of bytes read in the file.
+ */
+int read_buffer(FILE* object, char* buffer, int pos);
 
 #endif

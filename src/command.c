@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "config.h"
-#include "command.h"
-#include "std.h"
 #include "sdl.h"
+#include "std.h"
+#include "command.h"
 
 void command_init(struct command_context* st_cmd) {
     st_cmd->text   = malloc(CMD_BUFFER);

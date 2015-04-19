@@ -51,6 +51,9 @@ struct render_context {
      * Contains the thread of the rendering context.
      */
     SDL_Thread* thread;
+    /**
+     * Contains the mutex of the rendering context.
+     */
     SDL_mutex*  mutex;
 };
 

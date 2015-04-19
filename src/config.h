@@ -35,4 +35,9 @@
  */
 #define FAIL 1
 
+/**
+ * Defines the buffer used for reading.
+ */
+#define READ_BUFFER 128
+
 /** @file */

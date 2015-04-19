@@ -6,6 +6,7 @@
 #include "render.h"
 #include "camera.h"
 #include "command.h"
+#include "cube.h"
 
 /**
  * This data structure contains variables about the main SDL context of the
@@ -37,6 +38,8 @@ struct sdl_context {
      * Contains the command context.
      */
     struct command_context st_cmd;
+
+    struct cube st_cube;
 
     SDL_Event event;
     SDL_version version_compiled;
@@ -208,4 +211,5 @@ int sdl_handle_motion(struct sdl_context* st_sdl, SDL_MouseMotionEvent motion);
 int sdl_handle_wheel(struct sdl_context* st_sdl, SDL_MouseWheelEvent wheel);
 
 /** @file */
+
 #endif

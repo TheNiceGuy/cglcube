@@ -19,10 +19,11 @@ BINDIR=./bin
 SRCDIR=./src
 
 OBJECTS=$(SRCDIR)/main.o $(SRCDIR)/sdl.o $(SRCDIR)/render.o $(SRCDIR)/draw.o \
-		$(SRCDIR)/camera.o $(SRCDIR)/text.o $(SRCDIR)/std.o $(SRCDIR)/command.o
+		$(SRCDIR)/camera.o $(SRCDIR)/text.o $(SRCDIR)/std.o $(SRCDIR)/command.o \
+		$(SRCDIR)/cube.o $(SRCDIR)/cubies.o $(SRCDIR)/mesh.o $(SRCDIR)/material.o
 
-LINUX_CC=gcc
-LINUX_LD=gcc
+LINUX_CC=clang
+LINUX_LD=clang
 LINUX_CCFLAGS=-I/usr/include/SDL2 -I/usr/include -D_REENTRANT -D__LINUX__ \
               -Wall -pedantic -g
 LINUX_LDFLAGS=-L/usr/lib -lm -lSDL2 -lSDL2_ttf -lGL -lGLU

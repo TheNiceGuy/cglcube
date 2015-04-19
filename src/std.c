@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include "config.h"
 #include "std.h"
@@ -115,4 +114,33 @@ void parse_argument(char*** argv, int* argc, char* string) {
     }
 
     *argc = j;
+}
+
+int read_buffer(FILE* object, char* buffer, int pos) {
+    int size, nsize, i;
+
+    /*
+     * Get last line that can fits in the buffer.
+     */
+    size = fread(buffer, 1, READ_BUFFER, object);
+    for(i = 0; i < size; i++)
+        if(buffer[i] == '\n')
+            nsize = i;
+
+    /*
+     * Read until the last possible newline to prevent cutoff.
+     */
+    fseek(object, pos, SEEK_SET);
+    size = fread(buffer, 1, nsize, object);
+    buffer[size] = '\0';
+
+    /*
+     * Replace new lines by spaces.
+     */
+    pos = pos+size;
+    for(i = 0; i < size; i++)
+        if(buffer[i] == '\n')
+            buffer[i] = ' ';
+
+    return pos;
 }
