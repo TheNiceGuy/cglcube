@@ -11,11 +11,8 @@ struct cubies {
     struct point st_pos;
     /**
      * Contains the mesh used to render to cubies.
-     *
-     * TODO: It should use a pointer since a lots of cubies have the same mesh.
-     *       This would prevent duplication of memories.
      */
-    struct mesh st_mesh;
+    struct mesh* st_mesh;
 };
 
 /**
@@ -29,8 +26,9 @@ void cubies_init(struct cubies* st_cubies);
  * This function sets and loads the mesh into the memory.
  *
  * @param st_cubies A pointer to a cubies structure.
+ * @param st_cubies A pointer to a mesh structure.
  */
-void cubies_set_mesh(struct cubies* st_cubies, char* file);
+void cubies_set_mesh(struct cubies* st_cubies, struct mesh* st_mesh);
 
 /**
  * This function frees the allocated memories. Actually, it destroys the mesh

@@ -25,6 +25,10 @@ struct cube {
      */
     struct cubies* st_cubies;
     /**
+     * Contains the mesh structure used by the cubies.
+     */
+    struct mesh st_mesh;
+    /**
     * Points to the parent SDL context of the cube.
     *
     * TODO: Might use that one later.

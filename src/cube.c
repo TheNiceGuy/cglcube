@@ -8,6 +8,7 @@
 void cube_init(struct cube* st_cube) {
     st_cube->power = DEFAULT_POWER;
 
+    mesh_init(&st_cube->st_mesh, "cube_test.obj");
     cube_allocate(st_cube);
     cube_setup(st_cube);
 }
@@ -40,7 +41,7 @@ void cube_setup(struct cube* st_cube) {
                    z == 0 || z == st_cube->power-1)
                 {
                     cubies_init(&st_cube->st_cubies[i]);
-                    cubies_set_mesh(&st_cube->st_cubies[i], "cube_test.obj");
+                    cubies_set_mesh(&st_cube->st_cubies[i], &st_cube->st_mesh);
                     cubies_set_pos(&st_cube->st_cubies[i], x, y, z);
 
                     i++;
@@ -52,6 +53,8 @@ void cube_setup(struct cube* st_cube) {
 
 void cube_destroy(struct cube* st_cube) {
     int i;
+
+    mesh_free(&st_cube->st_mesh);
 
     for(i = 0; i < st_cube->n_cubies; i++)
         cubies_free(&st_cube->st_cubies[i]);
