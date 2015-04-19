@@ -17,8 +17,14 @@ void mtl_init(struct mtl* st_mtl, char* file) {
 }
 
 void mtl_load(struct mtl* st_mtl) {
+    st_mtl->object = fopen(st_mtl->file, "r");
+    if(st_mtl->object == NULL)
+        printf("Impossible to open the file!\n");
+
     mtl_alloc(st_mtl);
     mtl_parse_file(st_mtl);
+
+    fclose(st_mtl->object);
 }
 
 void mtl_parse_file(struct mtl* st_mtl) {
@@ -66,10 +72,6 @@ void mtl_alloc(struct mtl* st_mtl) {
     char** argv;
     int argc;
     int osize, nsize, i;
-
-    st_mtl->object = fopen(st_mtl->file, "r");
-    if(st_mtl->object == NULL)
-        printf("Impossible to open the file!\n");
 
     rewind(st_mtl->object);
     osize = 0;

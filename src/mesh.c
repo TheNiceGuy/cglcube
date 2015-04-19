@@ -22,8 +22,14 @@ void mesh_init(struct mesh* st_mesh, char* file) {
 }
 
 void mesh_load(struct mesh* st_mesh) {
+    st_mesh->object = fopen(st_mesh->file, "r");
+    if(st_mesh->object == NULL)
+        printf("Impossible to open the file!\n");
+
     mesh_alloc(st_mesh);
     mesh_parse_file(st_mesh);
+
+    fclose(st_mesh->object);
 }
 
 void mesh_parse_file(struct mesh* st_mesh) {
@@ -135,10 +141,6 @@ void mesh_alloc(struct mesh* st_mesh) {
     int argc;
     int osize, nsize, i;
 
-    st_mesh->object = fopen(st_mesh->file, "r");
-    if(st_mesh->object == NULL)
-        printf("Impossible to open the file!\n");
-
     rewind(st_mesh->object);
     osize = 0;
     nsize = 0;
@@ -174,8 +176,6 @@ void mesh_alloc(struct mesh* st_mesh) {
 }
 
 void mesh_free(struct mesh* st_mesh) {
-    fclose(st_mesh->object);
-
     free(st_mesh->vertices);
     free(st_mesh->indices);
     free(st_mesh->colorpointer);
