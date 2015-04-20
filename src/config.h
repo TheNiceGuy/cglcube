@@ -13,7 +13,7 @@
 #define DEFAULT_Z 3.5
 
 #define ZOOM_MIN 1
-#define ZOOM_MAX 20
+#define ZOOM_MAX 60
 
 /**
  * Defines a FALSE boolean.

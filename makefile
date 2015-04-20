@@ -26,7 +26,7 @@ LINUX_CC=clang
 LINUX_LD=clang
 LINUX_CCFLAGS=-I/usr/include/SDL2 -I/usr/include -D_REENTRANT -D__LINUX__ \
               -Wall -pedantic -g
-LINUX_LDFLAGS=-L/usr/lib -lm -lSDL2 -lSDL2_ttf -lGL -lGLU
+LINUX_LDFLAGS=-L/usr/lib -lm -lSDL2 -lSDL2_ttf -lGL -lGLU -lGLEW
 
 WIN32_CC=i686-w64-mingw32-gcc
 WIN32_LD=i686-w64-mingw32-gcc

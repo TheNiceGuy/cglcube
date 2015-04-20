@@ -26,6 +26,14 @@ struct mesh {
      */
     int cface;
     /**
+     *
+     */
+    GLuint vboID;
+    /**
+     * Contains a pointer to the vertex indices of each face.
+     */
+    GLubyte* indices;
+    /**
      * Contains a pointer to the possible vertices.
      */
     GLfloat* vertices;
@@ -37,10 +45,6 @@ struct mesh {
      * Contains a pointer to the rendered vertices.
      */
     GLfloat* vertexpointer;
-    /**
-     * Contains a pointer to the vertex indices of each face.
-     */
-    GLubyte* indices;
     /**
      * Contains the file descriptor of the mesh.
      */

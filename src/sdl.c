@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include "config.h"
 #include "sdl.h"
 #include "cube.h"
@@ -48,14 +49,6 @@ void sdl_init(struct sdl_context* st_sdl) {
     command_link_sdl(&st_sdl->st_cmd, st_sdl);
     command_link_text(&st_sdl->st_cmd, &st_sdl->st_render.st_text_cmd);
 
-    cube_init(&st_sdl->st_cube);
-    cube_link_sdl(&st_sdl->st_cube, st_sdl);
-}
-
-int sdl_start(struct sdl_context* st_sdl) {
-    if(st_sdl->running)
-        return FAIL;
-
     if(SDL_Init(SDL_INIT_VIDEO) != SUCCESS) {
         printf("Unable to initialize SDL: %s\n", SDL_GetError());
         exit(FAIL);
@@ -70,6 +63,14 @@ int sdl_start(struct sdl_context* st_sdl) {
 
     sdl_create_opengl(st_sdl);
     sdl_opengl_version(st_sdl);
+
+    cube_init(&st_sdl->st_cube);
+    cube_link_sdl(&st_sdl->st_cube, st_sdl);
+}
+
+int sdl_start(struct sdl_context* st_sdl) {
+    if(st_sdl->running)
+        return FAIL;
 
     render_start(&st_sdl->st_render);
 
@@ -91,6 +92,8 @@ int sdl_stop(struct sdl_context* st_sdl) {
 }
 
 int sdl_create_opengl(struct sdl_context* st_sdl) {
+    int error;
+
     sdl_resolution_start(st_sdl);
 
     SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
@@ -113,6 +116,13 @@ int sdl_create_opengl(struct sdl_context* st_sdl) {
 
     SDL_GL_SetSwapInterval(0);
     SDL_GL_MakeCurrent(st_sdl->window, st_sdl->window_glcontext);
+
+    error = glewInit();
+    if(error != GLEW_OK) {
+        printf("Error: %s\n", glewGetErrorString(error));
+        exit(FAIL);
+    }
+    /*printf("glew error %s \n", glewGetErrorString(GlewInitResult));*/
 
     return SUCCESS;
 }
