@@ -25,26 +25,34 @@ struct mesh {
      * Contains the index of the next face that will be written.
      */
     int cface;
+    /*
+     * Contains the size of all the vertex/normal/color.
+     */
+    int elementsize;
     /**
-     *
+     * Contains the VBO ID used to render the mesh.
      */
     GLuint vboID;
-    /**
-     * Contains a pointer to the vertex indices of each face.
-     */
-    GLubyte* indices;
     /**
      * Contains a pointer to the possible vertices.
      */
     GLfloat* vertices;
     /**
-     * Contains a pointer to the rendered colors.
+     * Contains a pointer to the possible vertices.
      */
-    GLfloat* colorpointer;
+    GLfloat* normals;
     /**
      * Contains a pointer to the rendered vertices.
      */
     GLfloat* vertexpointer;
+    /**
+     * Contains a pointer to the rendered normals.
+     */
+    GLfloat* normalpointer;
+    /**
+     * Contains a pointer to the rendered colors.
+     */
+    GLfloat* colorpointer;
     /**
      * Contains the file descriptor of the mesh.
      */
