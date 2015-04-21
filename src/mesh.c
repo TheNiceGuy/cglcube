@@ -28,7 +28,12 @@ void mesh_load(struct mesh* st_mesh) {
 
     mesh_alloc(st_mesh);
     mesh_parse_file(st_mesh);
+    mesh_create_vbo(st_mesh);
 
+    fclose(st_mesh->object);
+}
+
+void mesh_create_vbo(struct mesh* st_mesh) {
     glGenBuffersARB(1, &st_mesh->vboID);
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, st_mesh->vboID);
     glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -46,8 +51,6 @@ void mesh_load(struct mesh* st_mesh) {
                        2*st_mesh->elementsize,
                        st_mesh->elementsize,
                        st_mesh->colorpointer);
-
-    fclose(st_mesh->object);
 }
 
 void mesh_parse_file(struct mesh* st_mesh) {

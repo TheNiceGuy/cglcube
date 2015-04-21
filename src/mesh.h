@@ -83,6 +83,13 @@ void mesh_init(struct mesh* st_mesh, char* file);
 void mesh_load(struct mesh* st_mesh);
 
 /**
+ * This function creates the VBO related to the mesh.
+ *
+ * @param st_mesh A pointer to a mesh structure.
+ */
+void mesh_create_vbo(struct mesh* st_mesh);
+
+/**
  * This function parses the data inside the file into an mesh structure.
  *
  * @param st_mesh A pointer to a mesh structure.
