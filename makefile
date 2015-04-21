@@ -31,7 +31,7 @@ LINUX_LDFLAGS=-L/usr/lib -lm -lSDL2 -lSDL2_ttf -lGL -lGLU -lGLEW
 WIN32_CC=i686-w64-mingw32-gcc
 WIN32_LD=i686-w64-mingw32-gcc
 WIN32_LIBS_LOC=/usr/i686-w64-mingw32
-WIN32_LIBS=SDL2.dll,SDL2_ttf.dll,libfreetype-6.dll
+WIN32_LIBS=SDL2.dll,SDL2_ttf.dll,libfreetype-6.dll,glew32.dll
 WIN32_CCFLAGS=-I$(WIN32_LIBS_LOC)/include/SDL2 -Dmain=SDL_main -D__WIN32__ \
               -DGLEW_STATIC -Wall -pedantic -g -static
 WIN32_LDFLAGS=-L$(WIN32_LIBS_LOC)/lib -lmingw32 -mwindows \
