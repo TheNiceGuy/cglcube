@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include "material.h"
 
+#define BUFFER_OFFSET(i) ((char*)NULL+(i))
+
 struct mesh {
     /**
      * Contains the name of the file that contains the materials library.

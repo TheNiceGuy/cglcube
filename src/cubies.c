@@ -37,8 +37,8 @@ void cubies_draw(struct cubies* st_cubies) {
     glEnableClientState(GL_VERTEX_ARRAY);
 
     glVertexPointer(3, GL_FLOAT, 0, 0);
-    glNormalPointer(GL_FLOAT, 0, (void*)(st_cubies->st_mesh->elementsize));
-    glColorPointer(3, GL_FLOAT, 0, (void*)(2*st_cubies->st_mesh->elementsize));
+    glNormalPointer(GL_FLOAT, 0, (void*)BUFFER_OFFSET(st_cubies->st_mesh->elementsize));
+    glColorPointer(3, GL_FLOAT, 0, (void*)BUFFER_OFFSET(2*st_cubies->st_mesh->elementsize));
 
     glDrawArrays(GL_TRIANGLES, 0, 3*st_cubies->st_mesh->nface);
 
