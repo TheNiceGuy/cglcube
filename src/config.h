@@ -1,3 +1,6 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
 /**
  * Defines the name of the game.
  */
@@ -14,6 +17,8 @@
 
 #define ZOOM_MIN 1
 #define ZOOM_MAX 60
+
+#define DEFAULT_POWER 0
 
 /**
  * Defines a FALSE boolean.
@@ -41,3 +46,4 @@
 #define READ_BUFFER 128
 
 /** @file */
+#endif

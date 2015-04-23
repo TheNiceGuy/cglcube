@@ -64,7 +64,7 @@ void sdl_init(struct sdl_context* st_sdl) {
     sdl_create_opengl(st_sdl);
     sdl_opengl_version(st_sdl);
 
-    cube_init(&st_sdl->st_cube);
+    cube_init(&st_sdl->st_cube, DEFAULT_POWER);
     cube_link_sdl(&st_sdl->st_cube, st_sdl);
 }
 

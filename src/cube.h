@@ -1,11 +1,10 @@
 #ifndef CUBE_H
 #define CUBE_H
 
+#include <SDL2/SDL.h>
 #include "sdl.h"
 #include "std.h"
 #include "cubies.h"
-
-#define DEFAULT_POWER 10;
 
 struct cube {
     /**
@@ -34,6 +33,10 @@ struct cube {
     * TODO: Might use that one later.
     */
     struct sdl_context* st_sdl_parent;
+    /**
+     * Contains a mutex to make cube handling thread-safe.
+     */
+    SDL_mutex*  mutex;
 };
 
 /**
@@ -41,7 +44,7 @@ struct cube {
  *
  * @param st_cube A pointer to a cube structure.
  */
-void cube_init(struct cube* st_cube);
+void cube_init(struct cube* st_cube, int power);
 
 /**
  * This function links the cube with its SDL context.
@@ -51,6 +54,15 @@ void cube_init(struct cube* st_cube);
  */
 void cube_link_sdl(struct cube* st_cube, struct sdl_context* st_sdl);
 
+void cube_create(struct cube* st_cube);
+
+/**
+ * This function destroys the cube. It frees all allocated memories.
+ *
+ * @param st_cube A pointer to a cube structure.
+ */
+void cube_destroy(struct cube* st_cube);
+
 /**
  * This function allocates memories to the cube based on its power. It creates
  * the table containing the cubies.
@@ -58,6 +70,8 @@ void cube_link_sdl(struct cube* st_cube, struct sdl_context* st_sdl);
  * @param st_cube A pointer to a cube structure.
  */
 void cube_allocate(struct cube* st_cube);
+
+void cube_free(struct cube* st_cube);
 
 /**
  * This function setups the cube. It initialises the position and the rotation
@@ -67,12 +81,7 @@ void cube_allocate(struct cube* st_cube);
  */
 void cube_setup(struct cube* st_cube);
 
-/**
- * This function destroys the cube. It frees all allocated memories.
- *
- * @param st_cube A pointer to a cube structure.
- */
-void cube_destroy(struct cube* st_cube);
+void cube_change_power(struct cube* st_cube, int power);
 
 /**
  * This function draws the cube at the origin of the current matrix.

@@ -4,6 +4,7 @@
 #include "sdl.h"
 #include "std.h"
 #include "command.h"
+#include "cube.h"
 
 void command_init(struct command_context* st_cmd) {
     st_cmd->text   = malloc(CMD_BUFFER);
@@ -108,7 +109,7 @@ int command_execute(struct command_context* st_cmd) {
 }
 
 int command_handle_set(struct command_context* st_cmd, char** argv, int argc) {
-    int w, h;
+    int w, h, p;
 
     if(strcmp(argv[0], "resolution") == 0) {
         if(argc == 3) {
@@ -119,6 +120,21 @@ int command_handle_set(struct command_context* st_cmd, char** argv, int argc) {
                 sdl_resolution_set(st_cmd->st_sdl_parent, w, h);
             else {
                 command_set_error(st_cmd, "Invalid resolution.");
+                return FAIL;
+            }
+        } else {
+            command_set_error(st_cmd, "Invalid number of arguments.");
+            return FAIL;
+        }
+    } else
+    if(strcmp(argv[0], "power") == 0) {
+        if(argc == 2) {
+            p = atoi(argv[1]);
+
+            if(p > 0)
+                cube_change_power(&st_cmd->st_sdl_parent->st_cube, p);
+            else {
+                command_set_error(st_cmd, "Invalid power.");
                 return FAIL;
             }
         } else {
