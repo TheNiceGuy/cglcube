@@ -82,6 +82,17 @@ void cube_change_power(struct cube* st_cube, int power) {
     SDL_UnlockMutex(st_cube->mutex);
 }
 
+void cube_change_color(struct cube* st_cube, char* name, int r, int g, int b) {
+    GLfloat color[3];
+
+    color[0] = (GLfloat)r/255;
+    color[1] = (GLfloat)g/255;
+    color[2] = (GLfloat)b/255;
+
+    mtl_set(&st_cube->st_mesh.st_mtl, name, color);
+    mesh_update(&st_cube->st_mesh);
+}
+
 void cube_draw(struct cube* st_cube) {
     int i;
 

@@ -173,6 +173,18 @@ void mesh_parse_face(struct mesh* st_mesh, char** coor, GLfloat color[3]) {
     st_mesh->cface=st_mesh->cface+3;
 }
 
+void mesh_update(struct mesh* st_mesh) {
+    st_mesh->object = fopen(st_mesh->file, "r");
+    if(st_mesh->object == NULL)
+        printf("Impossible to open the file!\n");
+
+    glDeleteBuffersARB(1, &st_mesh->vboID);
+
+    mesh_parse_file(st_mesh);
+    mesh_create_vbo(st_mesh);
+    fclose(st_mesh->object);
+}
+
 void mesh_alloc(struct mesh* st_mesh) {
     char buffer[READ_BUFFER];
     char** argv;

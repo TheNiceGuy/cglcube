@@ -139,8 +139,8 @@ void mtl_set(struct mtl* st_mtl, char* name, GLfloat* color) {
         st_mtl->diffuse[3*i+1] = color[1];
         st_mtl->diffuse[3*i+2] = color[2];
     } else {
-        color[0] = 0;
-        color[1] = 0;
-        color[2] = 0;
+        st_mtl->diffuse[3*i+0] = 0;
+        st_mtl->diffuse[3*i+1] = 0;
+        st_mtl->diffuse[3*i+2] = 0;
     }
 }

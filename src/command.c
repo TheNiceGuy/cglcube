@@ -110,6 +110,7 @@ int command_execute(struct command_context* st_cmd) {
 
 int command_handle_set(struct command_context* st_cmd, char** argv, int argc) {
     int w, h, p;
+    int r, g, b;
 
     if(strcmp(argv[0], "resolution") == 0) {
         if(argc == 3) {
@@ -135,6 +136,26 @@ int command_handle_set(struct command_context* st_cmd, char** argv, int argc) {
                 cube_change_power(&st_cmd->st_sdl_parent->st_cube, p);
             else {
                 command_set_error(st_cmd, "Invalid power.");
+                return FAIL;
+            }
+        } else {
+            command_set_error(st_cmd, "Invalid number of arguments.");
+            return FAIL;
+        }
+    } else
+    if(strcmp(argv[0], "color") == 0) {
+        if(argc == 5) {
+            r = atoi(argv[2]);
+            g = atoi(argv[3]);
+            b = atoi(argv[4]);
+
+            if(r >= 0 && r <= 255 &&
+               g >= 0 && g <= 255 &&
+               b >= 0 && b <= 255)
+            {
+                cube_change_color(&st_cmd->st_sdl_parent->st_cube, argv[1], r, g, b);
+            } else {
+                command_set_error(st_cmd, "Invalid colors.");
                 return FAIL;
             }
         } else {

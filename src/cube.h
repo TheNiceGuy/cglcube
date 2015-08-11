@@ -36,7 +36,7 @@ struct cube {
     /**
      * Contains a mutex to make cube handling thread-safe.
      */
-    SDL_mutex*  mutex;
+    SDL_mutex* mutex;
 };
 
 /**
@@ -82,6 +82,7 @@ void cube_free(struct cube* st_cube);
 void cube_setup(struct cube* st_cube);
 
 void cube_change_power(struct cube* st_cube, int power);
+void cube_change_color(struct cube* st_cube, char* name, int r, int g, int b);
 
 /**
  * This function draws the cube at the origin of the current matrix.

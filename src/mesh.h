@@ -104,6 +104,7 @@ void mesh_parse_file(struct mesh* st_mesh);
  * @param color A pointer to the current color defined in the file.
  */
 void mesh_parse_face(struct mesh* st_mesh, char** coor, GLfloat color[3]);
+void mesh_update(struct mesh* st_mesh);
 
 /**
  * This function allocates memories based from the data in the file for a mesh
@@ -118,6 +119,6 @@ void mesh_alloc(struct mesh* st_mesh);
  *
  * @param st_mesh A pointer to a mesh structure.
  */
-void mesh_free(struct mesh* st_mesh);
+ void mesh_free(struct mesh* st_mesh);
 
 #endif
