@@ -107,7 +107,7 @@ void mtl_free(struct mtl* st_mtl) {
     free(st_mtl->diffuse);
 }
 
-void mtl_set(struct mtl* st_mtl, char* name, GLfloat* color) {
+void mtl_use(struct mtl* st_mtl, char* name, GLfloat* color) {
     int i;
 
     for(i = 0; i < st_mtl->nmtl; i++) {
@@ -119,6 +119,25 @@ void mtl_set(struct mtl* st_mtl, char* name, GLfloat* color) {
         color[0] = st_mtl->diffuse[3*i+0];
         color[1] = st_mtl->diffuse[3*i+1];
         color[2] = st_mtl->diffuse[3*i+2];
+    } else {
+        color[0] = 0;
+        color[1] = 0;
+        color[2] = 0;
+    }
+}
+
+void mtl_set(struct mtl* st_mtl, char* name, GLfloat* color) {
+    int i;
+
+    for(i = 0; i < st_mtl->nmtl; i++) {
+        if(strcmp(st_mtl->name[i], name) == 0)
+            break;
+    }
+
+    if(i != st_mtl->nmtl) {
+        st_mtl->diffuse[3*i+0] = color[0];
+        st_mtl->diffuse[3*i+1] = color[1];
+        st_mtl->diffuse[3*i+2] = color[2];
     } else {
         color[0] = 0;
         color[1] = 0;

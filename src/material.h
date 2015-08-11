@@ -69,8 +69,21 @@ void mtl_alloc(struct mtl* st_mtl);
 void mtl_free(struct mtl* st_mtl);
 
 /**
- * This function sets a material using one inside the library. It only sets
+ * This function sets the color to one material inside the library. It only sets
  * the diffuse color right now.
+ *
+ * TODO: Add support for specular, ambiant, etc.
+ *
+ * @param st_mtl A pointer to a mtl structure.
+ * @param st_mtl A pointer to a string containing the name of the requested
+ *               material.
+ * @param st_mtl A pointer to an RGB array.
+ */
+void mtl_use(struct mtl* st_mtl, char* name, GLfloat* color);
+
+/**
+ * This function changes the color of a material inside the library. It only
+ * changes the diffuse color right now.
  *
  * TODO: Add support for specular, ambiant, etc.
  *

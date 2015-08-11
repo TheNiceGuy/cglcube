@@ -77,7 +77,7 @@ void mesh_parse_file(struct mesh* st_mesh) {
 
         for(i = 0; i < argc; i++) {
             if(strcmp(argv[i], "usemtl") == 0) {
-                mtl_set(&st_mesh->st_mtl, argv[i+1], color);
+                mtl_use(&st_mesh->st_mtl, argv[i+1], color);
             } else if(strcmp(argv[i], "v") == 0) {
                 st_mesh->vertices[vertc+0] = strtof(argv[i+1], NULL);
                 st_mesh->vertices[vertc+1] = strtof(argv[i+2], NULL);
